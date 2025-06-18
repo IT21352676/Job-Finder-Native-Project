@@ -1,0 +1,20 @@
+.dashboard-container {
+  display: flex;
+  flex: 1;
+  flex-direction: row; /* Keep other components in a row */
+  justify-content: space-between; /* Space them out */
+  align-items: flex-start; /* Align items at the start */
+  flex-wrap: wrap; /* Allow items to wrap if needed */
+}
+
+.dashboard-content {
+  flex: 1; 
+  display: flex;
+  justify-content: center; /* Centers content horizontally */
+  align-items: center; /* Centers content vertically */
+}
+
+.dashboard-content2 {
+  width: 50%; /* Full width for the rating chart section */
+  margin-top: 20px; /* Add some spacing above the Ratings Chart */
+}

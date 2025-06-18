@@ -1,0 +1,79 @@
+.custom-sider {
+    background: linear-gradient(135deg, #00587a 0%, #0f3443 100%);
+    min-height: 105vh;
+    overflow-y: auto;
+  }
+  .logo-container {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .menu-bar {
+    border-right: 0;
+    background: transparent;
+  }
+  
+  .ant-menu-item, .ant-menu-submenu-title {
+    color: #ffffff !important;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .ant-menu-item:hover, .ant-menu-submenu-title:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%) !important;
+    color: #ffffff !important;
+  }
+  
+  .ant-menu-item-selected {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%) !important;
+    color: #ffffff !important;
+  }
+  
+  .ant-menu-submenu-arrow {
+    color: #ffffff !important;
+  }
+  
+  .ant-menu-sub {
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  .ant-menu-item a, .ant-menu-submenu-title a {
+    color: #ffffff !important;
+  }
+  
+  .ant-menu-item-icon {
+    color: #ffffff !important;
+  }
+  
+  .ant-layout-sider-trigger {
+    background: linear-gradient(135deg, #00587a 0%, #0f3443 100%);
+  }
+  
+  /* Scrollbar styles */
+  .custom-sider::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-sider::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+  
+  .custom-sider::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .custom-sider {
+      width: 80px !important;
+      min-width: 80px !important;
+    }
+  
+    .ant-menu-item, .ant-menu-submenu-title {
+      padding: 0 8px !important;
+    }
+  }
