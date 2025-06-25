@@ -39,7 +39,7 @@ module.exports = getJobRecomendations = {
   },
 
   async getJobsDetails(req, res) {
-    const sql = "select * from temporary_jobs;";
+    const sql = "show tables;";
     connection.query(sql, (err, results) => {
       if (err) {
         console.error("Error fetching job list:", err);
@@ -49,6 +49,7 @@ module.exports = getJobRecomendations = {
       if (results.length === 0) {
         return res.status(404).json({ error: "No jobs found" });
       }
+
       console.log(results);
       res.status(200).json(results);
     });
