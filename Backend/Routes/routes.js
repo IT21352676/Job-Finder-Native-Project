@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const app = express();
+const http = require("http");
 
 // OTP routes
 const verifyOtp = require("../Functions/Common/otp/verifyOtp");
@@ -303,6 +305,8 @@ const {
   generateJobRecommendations,
   getJobsDetails,
 } = require("../Functions/AIFeatures/jobRecommendation");
+const { sending } = require("../Functions/MessagingModule/Messaging");
+const { initSocket } = require("../socket");
 
 router.post("/job-recommandation", (req, res) => {
   generateJobRecommendations(req, res);
@@ -310,6 +314,11 @@ router.post("/job-recommandation", (req, res) => {
 
 router.get("/job-details", (req, res) => {
   getJobsDetails(req, res);
+});
+
+const io = initSocket(http.createServer(app));
+router.post("/messaging", (req, res) => {
+  sending(req, res);
 });
 
 module.exports = router;
