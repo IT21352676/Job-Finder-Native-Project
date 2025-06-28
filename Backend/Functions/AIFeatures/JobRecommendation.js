@@ -15,17 +15,12 @@ async function generateJobRecommendations(req, res) {
         messages: [
           {
             role: "system",
-            content: `You are a helpful job recommendation assistant. Based on the user's skills and behavior, recommend suitable jobs from the provided job list. For each recommended job, explain why it matches the user's profile. If other jobs are unmatching with users skill dont mention about those unsuitable jobs, only output suitable jobs`,
+            content:
+              "You are an intelligent and concise job recommendation assistant. Your task is to analyze the user's skills and behavioral traits, then recommend only the jobs from the given list that are highly suitable. For each recommended job, briefly explain *why* it matches the user's profile. Do not mention or refer to any jobs that are unsuitable.",
           },
           {
             role: "user",
-            content: `Here is the available job list:
-${jobList}
-
-Here are the user's skills and behaviors:
-${userContent}
-
-Please only recommend the most suitable jobs for this.`,
+            content: `### Job List:\n${jobList}\n\n### User Profile (Skills & Behaviors):\n${userContent}\n\n### Instructions:\n- Recommend only the most relevant jobs.\n- For each job, provide a short explanation of the match.\n- Format the response as a markdown list:\n\n**Example Output Format:**\n\n- **Job Title 1**: Explanation why it's suitable.\n- **Job Title 2**: Explanation why it's suitable.\n\nBegin.`,
           },
         ],
       },
