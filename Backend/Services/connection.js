@@ -1,26 +1,23 @@
-const mysql = require("mysql");
-const dotenv = require("dotenv");
+const mysql = require('mysql')
+const dotenv = require('dotenv')
 
-dotenv.config();
+dotenv.config()
 
 const connection = mysql.createConnection({
-  host: process.env.HOST_NAME,
-  user: process.env.USER_NAME,
-  password: process.env.PASSWORD,
-  port: process.env.DB_PORT,
-  database: process.env.DB,
-  ssl: {
-    rejectUnauthorized: true,
-  },
-});
+    host: process.env.HOST_NAME,
+    user: process.env.USER_NAME,
+    password: process.env.PASSWORD, 
+    port: process.env.DB_PORT,
+    database: process.env.DB
+})
 
-connection.connect(function (err) {
-  if (err) {
-    console.log("Error connecting to Database" + err);
-    return;
-  } else {
-    console.log("Connected to the database");
-  }
-});
+connection.connect(function(err){
+    if(err) {
+        console.log('Error connecting to Database'+err);
+        return;
+    }
+    else{
+    console.log("Connected to the database")}
+})
 
 module.exports = connection;
