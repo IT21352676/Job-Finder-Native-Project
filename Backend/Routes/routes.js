@@ -301,10 +301,7 @@ router.delete("/reject-job-cancel-request", (req, res) => {
 
 // AI features routes
 
-const {
-  generateJobRecommendations,
-  getJobsDetails,
-} = require("../Functions/AIFeatures/jobRecommendation");
+const generateJobRecommendations = require("../Functions/AIFeatures/jobRecommendation");
 const { sending } = require("../Functions/MessagingModule/Messaging");
 const { initSocket } = require("../socket");
 
@@ -312,9 +309,9 @@ router.post("/job-recommandation", (req, res) => {
   generateJobRecommendations(req, res);
 });
 
-router.get("/job-details", (req, res) => {
-  getJobsDetails(req, res);
-});
+// router.get("/job-details", (req, res) => {
+//   getJobsDetails(req, res);
+// });
 
 const io = initSocket(http.createServer(app));
 router.post("/messaging", (req, res) => {
