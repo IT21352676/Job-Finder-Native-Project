@@ -2,7 +2,7 @@ const connection = require("../../../Services/connection");
 
 async function deactivateAccount(req, res) {
   const sql =
-    "UPDATE `parttime_srilanka`.`job_poster` SET `ActiveStatus` = 0 WHERE (`JobPosterID` = ?);";
+    "UPDATE `parttime_srilanka`.`job_poster` SET `ActiveStatus` = 0 WHERE (`poster_id` = ?);";
 
   connection.query(sql, req.params.id, (err, result) => {
     if (err) {
