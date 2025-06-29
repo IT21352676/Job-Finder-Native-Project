@@ -12,6 +12,7 @@ const { initSocket } = require("./socket");
 dotenv.config();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // app.use(
 //   cors({
