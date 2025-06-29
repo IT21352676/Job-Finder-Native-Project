@@ -9,12 +9,9 @@ const routes = require("./Routes/routes");
 const { messaging } = require("./Functions/MessagingModule/Messaging");
 const { initSocket } = require("./socket");
 
-
 dotenv.config();
 
 app.use(express.json());
-
-const routes = require("./Routes/routes");
 
 // app.use(
 //   cors({
