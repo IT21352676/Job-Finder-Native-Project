@@ -22,17 +22,4 @@ function messaging(io) {
   });
 }
 
-function sending(req, res) {
-  const { roomId, message, sender } = req.body;
-  const io = getIO();
-
-  io.to(roomId).emit("receiveMessage", {
-    message,
-    sender,
-    timestamp: new Date(),
-  });
-
-  res.send({ status: "Message emitted via HTTP POST" });
-}
-
-module.exports = { messaging, sending };
+module.exports = messaging;
