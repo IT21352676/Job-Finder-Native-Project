@@ -11,7 +11,7 @@ const jobSeekerRegistrationController = async (req, res) => {
   const {
     firstname,
     lastname,
-    username,
+    email,
     nic,
     birthday,
     gender,
@@ -28,7 +28,7 @@ const jobSeekerRegistrationController = async (req, res) => {
   const requiredFields = {
     firstname,
     lastname,
-    username,
+    email,
     nic,
     birthday,
     gender,
@@ -63,8 +63,8 @@ const jobSeekerRegistrationController = async (req, res) => {
   try {
     // Check for existing user
     const existingUsers = connection.query(
-      `SELECT * FROM parttime_srilanka.job_seeker WHERE nic = ? OR username = ?`,
-      [nic, username]
+      `SELECT * FROM parttime_srilanka.job_seeker WHERE nic = ? OR email = ?`,
+      [nic, email]
     );
 
     if (existingUsers.length > 0) {
@@ -77,14 +77,14 @@ const jobSeekerRegistrationController = async (req, res) => {
     // Insert user
     const insertUserQuery = `
       INSERT INTO parttime_srilanka.job_seeker (
-        username, firstname, lastname, nic, birthday, gender,
+        email, firstname, lastname, nic, birthday, gender,
         telnumber, addressLine, street, city, province,
         profileDoc_front, profileDoc_back, password
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const userData = [
-      username,
+      email,
       firstname,
       lastname,
       nic,
@@ -116,6 +116,20 @@ const jobSeekerRegistrationController = async (req, res) => {
 // DESC: REGISTER AS A JOB POSTER
 const jobPosterRegistrationController = async (req, res) => {
   try {
+    // Enhanced debugging
+    console.log("=== REQUEST DEBUG INFO ===");
+    console.log("Content-Type:", req.headers["content-type"]);
+    console.log("Body:", req.body);
+    console.log("Files:", req.files);
+    console.log("File keys:", req.files ? Object.keys(req.files) : "No files");
+
+    // Log each file if they exist
+    if (req.files) {
+      for (const [key, files] of Object.entries(req.files)) {
+        console.log(`Field ${key}:`, files);
+      }
+    }
+
     const {
       firstname,
       lastname,
@@ -157,7 +171,7 @@ const jobPosterRegistrationController = async (req, res) => {
 
     // Check if user already exists
     const checkUserQuery =
-      "SELECT * FROM parttime_srilanka.job_poster WHERE email = ?";
+      "SELECT * FROM parttime_srilanka.job_poster WHERE emailAddress = ?";
     connection.query(checkUserQuery, [email], async (err, results) => {
       if (err) {
         return res.status(500).json({ error: "Database error", details: err });
@@ -278,7 +292,7 @@ const jobPosterLoginController = async (req, res) => {
 
     // Check if user exists
     const getUserQuery =
-      "SELECT * FROM parttime_srilanka.job_poster WHERE email = ?";
+      "SELECT * FROM parttime_srilanka.job_poster WHERE emailAddress = ?";
     connection.query(getUserQuery, [email], async (err, results) => {
       if (err) {
         return res.status(500).json({ error: "Database error", details: err });
