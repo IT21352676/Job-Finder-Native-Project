@@ -1,9 +1,9 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
-const connection = require("../../Services/connection");
+// const connection = require("../../Services/connection");
 
 // Promisify the MySQL connection.query
-const query = util.promisify(connection.query).bind(connection);
+// const query = util.promisify(connection.query).bind(connection);
 
 //Send Verification Code Email
 const sendEmailVerificationCode = async (req, res) => {
@@ -52,7 +52,7 @@ const sendEmailVerificationCode = async (req, res) => {
 
     const otpData = [email, verificationCode, expiresAt];
 
-    await query(otpInsertQuery, otpData);
+    connection.query(otpInsertQuery, otpData);
 
     return res.status(200).json({
       message: "Email sent successfully",
@@ -74,7 +74,7 @@ const otpVerifications = async (req, res) => {
       return res.status(400).json({ message: "Email and OTP are required" });
     }
 
-    const dataexists = await query(`SELECT * FROM parttime_srilanka.otp 
+    const dataexists = connection.query(`SELECT * FROM parttime_srilanka.otp 
 WHERE email = ? AND otp = ? 
 ORDER BY exp_date DESC 
 LIMIT 1`);

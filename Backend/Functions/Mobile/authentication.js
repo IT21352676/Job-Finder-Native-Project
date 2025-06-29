@@ -1,12 +1,10 @@
 const bcrypt = require("bcrypt");
 const connection = require("../../Services/connection");
 const jwt = require("jsonwebtoken");
-
-const bcrypt = require("bcrypt");
-const util = require("util");
+// const util = require("util");
 
 // Promisify the MySQL connection.query
-const query = util.promisify(connection.query).bind(connection);
+// const query = util.promisify(connection.query).bind(connection);
 
 // DESC: REGISTER AS A JOB SEEKER
 const jobSeekerRegistrationController = async (req, res) => {
@@ -64,7 +62,7 @@ const jobSeekerRegistrationController = async (req, res) => {
 
   try {
     // Check for existing user
-    const existingUsers = await query(
+    const existingUsers = connection.query(
       `SELECT * FROM parttime_srilanka.job_seeker WHERE nic = ? OR username = ?`,
       [nic, username]
     );
@@ -102,7 +100,7 @@ const jobSeekerRegistrationController = async (req, res) => {
       hashedPassword,
     ];
 
-    await query(insertUserQuery, userData);
+    connection.query(insertUserQuery, userData);
 
     return res
       .status(201)
@@ -189,7 +187,6 @@ const jobPosterRegistrationController = async (req, res) => {
         company,
         frontDoc.filename,
         backDoc.filename,
-        proofDoc_back,
         hashedPassword,
       ];
 
