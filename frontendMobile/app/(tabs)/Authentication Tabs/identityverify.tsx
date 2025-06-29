@@ -1,4 +1,5 @@
 // IdentityVerification.tsx
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -95,9 +96,11 @@ const IdentityVerification: React.FC<IdentityVerificationProps> = ({ navigation 
         </View>
 
         {/* Finish Button */}
-        <TouchableOpacity style={styles.finishButton} onPress={handleFinish}>
-          <Text style={styles.finishButtonText}>Finish</Text>
-        </TouchableOpacity>
+        <Link href="/(tabs)/Authentication Tabs/askverificationtype">
+            <TouchableOpacity style={styles.finishButton}>
+            <Text style={styles.finishButtonText}>Finish</Text>
+            </TouchableOpacity>
+        </Link>
       </View>
 
       {/* Upload Modal */}

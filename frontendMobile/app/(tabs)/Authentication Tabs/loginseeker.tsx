@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'expo-router';
 import {
   View,
   Text,
@@ -17,7 +18,6 @@ import {
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loginType, setLoginType] = useState('seeker'); // 'seeker' or 'poster'
 
   const handleLogin = () => {
     if (!username || !password) {
@@ -25,8 +25,7 @@ export default function LoginScreen() {
       return;
     }
     
-    const userType = loginType === 'seeker' ? 'Job Seeker' : 'Job Poster';
-    Alert.alert('Login Successful', `Welcome ${userType}!\n\nThis would navigate to the main app.`);
+    Alert.alert('Login Successful', `Welcome Job Seeker!\n\nThis would navigate to the main app.`);
   };
 
   const handleForgotPassword = () => {
@@ -37,11 +36,11 @@ export default function LoginScreen() {
   };
 
   const handleSignUp = () => {
-    if (loginType === 'seeker') {
-      Alert.alert('Navigate', 'This would open Job Seeker Registration screen');
-    } else {
-      Alert.alert('Navigate', 'This would open Job Poster Registration screen');
-    }
+    Alert.alert('Navigate', 'This would open Job Seeker Registration screen');
+  };
+
+  const handleJobPosterLogin = () => {
+    Alert.alert('Navigate', 'This would open Job Poster Login screen');
   };
 
   return (
@@ -73,31 +72,9 @@ export default function LoginScreen() {
 
           {/* Login Form */}
           <View style={styles.loginCard}>
-            {/* Login Type Toggle */}
-            <View style={styles.toggleContainer}>
-              <TouchableOpacity 
-                style={[styles.toggleButton, loginType === 'seeker' && styles.toggleButtonActive]}
-                onPress={() => setLoginType('seeker')}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.toggleButtonText, loginType === 'seeker' && styles.toggleButtonTextActive]}>
-                  Seeker
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.toggleButton, loginType === 'poster' && styles.toggleButtonActive]}
-                onPress={() => setLoginType('poster')}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.toggleButtonText, loginType === 'poster' && styles.toggleButtonTextActive]}>
-                  Poster
-                </Text>
-              </TouchableOpacity>
-            </View>
-
             {/* Login Title */}
             <Text style={styles.loginTitle}>
-              {loginType === 'seeker' ? 'Login as a Job Seeker' : 'Login as a Job Poster'}
+              Login as a Job Seeker
             </Text>
             <Text style={styles.loginSubtitle}>
               Hello, Welcome to the Jobs
@@ -150,11 +127,20 @@ export default function LoginScreen() {
               <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
 
+            {/* Job Poster Login Button */}
+            <TouchableOpacity 
+              style={styles.jobPosterButton}
+              onPress={handleJobPosterLogin}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.jobPosterButtonText}><Link href="/(tabs)/Authentication Tabs/loginposter">Sign in as Job Poster</Link></Text>
+            </TouchableOpacity>
+
             {/* Sign Up Link */}
             <View style={styles.signUpContainer}>
               <Text style={styles.signUpText}>Don't have an account? </Text>
               <TouchableOpacity onPress={handleSignUp} activeOpacity={0.7}>
-                <Text style={styles.signUpLink}>Sign Up</Text>
+                <Text style={styles.signUpLink}><Link href="/(tabs)/registerseeker">Sign Up</Link></Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -188,7 +174,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 140, 66, 0.7)',
+    backgroundColor: 'rgba(255, 140, 66, 0.4)',
   },
   logoContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -223,37 +209,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 10,
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 25,
-    padding: 4,
-    marginBottom: 30,
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  toggleButtonActive: {
-    backgroundColor: '#ff8c42',
-    shadowColor: '#ff8c42',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  toggleButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#888',
-  },
-  toggleButtonTextActive: {
-    color: '#ffffff',
   },
   loginTitle: {
     fontSize: 28,
@@ -308,7 +263,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 25,
+    marginBottom: 15,
     shadowColor: '#ff8c42',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
@@ -319,6 +274,23 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  jobPosterButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#ff8c42',
+    borderRadius: 25,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 25,
+  },
+  jobPosterButtonText: {
+    color: '#ff8c42',
+    fontSize: 16,
+    fontWeight: '600',
     textAlign: 'center',
     letterSpacing: 0.5,
   },

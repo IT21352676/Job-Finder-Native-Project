@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -226,13 +227,24 @@ export default function SimpleRegistrationUI() {
             </View>
 
             {/* Register Button */}
-            <TouchableOpacity 
-              style={styles.registerButton}
-              onPress={handleRegister}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.registerButtonText}>Register</Text>
-            </TouchableOpacity>
+            <Link href="/(tabs)/identityverify">
+                <TouchableOpacity 
+                style={styles.registerButton}
+                activeOpacity={0.8}
+                >
+                <Text style={styles.registerButtonText}>Register</Text>
+                </TouchableOpacity>
+            </Link>
+
+            {/* Already have an account section */}
+            <View style={styles.loginSection}>
+              <Text style={styles.loginText}>Already have an account?</Text>
+              <TouchableOpacity 
+                activeOpacity={0.7}
+              >
+                <Link href="/(tabs)/Authentication Tabs/loginposter"><Text style={styles.loginLink}>Sign In</Text></Link>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -330,6 +342,24 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loginSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+    marginBottom: 20,
+  },
+  loginText: {
+    fontSize: 14,
+    color: '#666',
+    marginRight: 5,
+  },
+  loginLink: {
+    fontSize: 14,
+    color: '#ff8c42',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
   successContainer: {
     flex: 1,

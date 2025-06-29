@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -56,31 +57,6 @@ export default function JobSeekerRegistrationUI() {
     }
   };
 
-  if (currentPage === 'success') {
-    return (
-      <SafeAreaView style={styles.successContainer}>
-        <StatusBar barStyle="light-content" backgroundColor="#ff8c42" />
-        
-        <View style={styles.successContent}>
-          <View style={styles.successCard}>
-            <View style={styles.successIcon}>
-              <Text style={styles.checkMark}>✓</Text>
-            </View>
-            <Text style={styles.successTitle}>Registration Successful!</Text>
-            <Text style={styles.successMessage}>Welcome to Jobs as a Seeker!</Text>
-            
-            <TouchableOpacity 
-              style={styles.registerButton}
-              onPress={handleBackToLogin}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.registerButtonText}>Back to Login</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -212,13 +188,24 @@ export default function JobSeekerRegistrationUI() {
             </View>
 
             {/* Register Button */}
-            <TouchableOpacity 
-              style={styles.registerButton}
-              onPress={handleRegister}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.registerButtonText}>Register</Text>
-            </TouchableOpacity>
+            <Link href="/(tabs)/identityverify">
+                <TouchableOpacity 
+                style={styles.registerButton}
+                activeOpacity={0.8}
+                >
+                <Text style={styles.registerButtonText}>Register</Text>
+                </TouchableOpacity>
+            </Link>
+
+            {/* Already have an account section */}
+            <View style={styles.loginSection}>
+              <Text style={styles.loginText}>Already have an account?</Text>
+              <TouchableOpacity 
+                activeOpacity={0.7}
+              >
+                <Link href="/(tabs)/loginseeker"><Text style={styles.loginLink}>Sign In</Text></Link>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -316,6 +303,24 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loginSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+    marginBottom: 20,
+  },
+  loginText: {
+    fontSize: 14,
+    color: '#666',
+    marginRight: 5,
+  },
+  loginLink: {
+    fontSize: 14,
+    color: '#ff8c42',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
   successContainer: {
     flex: 1,

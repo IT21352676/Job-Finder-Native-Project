@@ -1,4 +1,5 @@
-// OTPMobileVerification.tsx
+// OTPEmailVerification.tsx
+import { Link } from 'expo-router';
 import React, { useState, useRef } from 'react';
 import {
   View,
@@ -12,16 +13,16 @@ import {
   TextInputKeyPressEventData,
 } from 'react-native';
 
-interface OTPMobileVerificationProps {
-  navigation?: any;
+interface OTPEmailVerificationProps {
+  navigation?: any; // Replace with your navigation type
 }
 
-const OTPMobileVerification: React.FC<OTPMobileVerificationProps> = ({ navigation }) => {
+const OTPEmailVerification: React.FC<OTPEmailVerificationProps> = ({ navigation }) => {
   const [otp, setOtp] = useState<string[]>(['', '', '', '']);
   const [resendTimer, setResendTimer] = useState<number>(0);
   const otpRefs = useRef<TextInput[]>([]);
 
-  const phoneNumber: string = '+94724751535';
+  const email: string = 'pramodellahama74@gmail.com';
 
   const handleOtpChange = (value: string, index: number): void => {
     const newOtp = [...otp];
@@ -42,9 +43,11 @@ const OTPMobileVerification: React.FC<OTPMobileVerificationProps> = ({ navigatio
 
   const handleResendOTP = (): void => {
     if (resendTimer === 0) {
-      Alert.alert('OTP Sent', 'A new OTP has been sent to your mobile number');
+      // Implement resend OTP logic
+      Alert.alert('OTP Sent', 'A new OTP has been sent to your email address');
       setResendTimer(30);
       
+      // Start countdown
       const timer = setInterval(() => {
         setResendTimer((prev: number) => {
           if (prev <= 1) {
@@ -60,8 +63,9 @@ const OTPMobileVerification: React.FC<OTPMobileVerificationProps> = ({ navigatio
   const handleNext = (): void => {
     const otpValue = otp.join('');
     if (otpValue.length === 4) {
-      console.log('Verifying OTP:', otpValue);
-      // navigation.navigate('NextScreen');
+      // Verify OTP logic here
+      console.log('Verifying Email OTP:', otpValue);
+      // navigation.navigate('IdentityVerification');
     } else {
       Alert.alert('Error', 'Please enter the complete OTP');
     }
@@ -72,24 +76,25 @@ const OTPMobileVerification: React.FC<OTPMobileVerificationProps> = ({ navigatio
       <View style={styles.content}>
         {/* Icon Container */}
         <View style={styles.iconContainer}>
-          <View style={styles.phoneIcon}>
-            <View style={styles.phoneBody} />
-            <View style={styles.phoneScreen} />
+          <View style={styles.documentIcon}>
+            <View style={styles.documentBody} />
+            <View style={styles.documentHeader} />
+            <View style={styles.documentLines} />
           </View>
-          <View style={styles.messageIcon}>
-            <View style={styles.messageBody} />
-            <View style={styles.messageFlap} />
+          <View style={styles.emailIcon}>
+            <View style={styles.emailBody} />
+            <View style={styles.emailFlap} />
           </View>
         </View>
 
         {/* Text Content */}
         <Text style={styles.title}>OTP Verification</Text>
-        <Text style={styles.subtitle}>Mobile</Text>
+        <Text style={styles.subtitle}>Email</Text>
         <Text style={styles.greeting}>Hello John,</Text>
         <Text style={styles.description}>
-          Thank you for registering with us. Please type the OTP that is shared to your mobile.
+          Thank you for registering with us. Please type the OTP that is shared to your email address.
         </Text>
-        <Text style={styles.phoneNumber}>{phoneNumber}</Text>
+        <Text style={styles.email}>{email}</Text>
 
         {/* OTP Input */}
         <View style={styles.otpContainer}>
@@ -112,7 +117,6 @@ const OTPMobileVerification: React.FC<OTPMobileVerificationProps> = ({ navigatio
               }
               keyboardType="numeric"
               maxLength={1}
-
               placeholderTextColor="#ccc"
             />
           ))}
@@ -134,9 +138,9 @@ const OTPMobileVerification: React.FC<OTPMobileVerificationProps> = ({ navigatio
             styles.nextButton,
             otp.join('').length === 4 ? styles.nextButtonActive : styles.nextButtonInactive
           ]} 
-          onPress={handleNext}
+          
         >
-          <Text style={styles.nextButtonText}>Next</Text>
+          <Link href='/(tabs)/Authentication Tabs/emailverified'><Text style={styles.nextButtonText}>Next</Text></Link>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -183,36 +187,44 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
-  phoneIcon: {
-    width: 30,
-    height: 40,
+  documentIcon: {
+    width: 35,
+    height: 45,
     position: 'relative',
   },
-  phoneBody: {
-    width: 30,
-    height: 40,
+  documentBody: {
+    width: 35,
+    height: 45,
     backgroundColor: 'white',
-    borderRadius: 6,
+    borderRadius: 4,
     borderWidth: 2,
     borderColor: '#333',
   },
-  phoneScreen: {
+  documentHeader: {
     position: 'absolute',
-    top: 6,
-    left: 4,
-    right: 4,
-    bottom: 10,
+    top: 5,
+    left: 5,
+    right: 5,
+    height: 12,
     backgroundColor: '#333',
     borderRadius: 2,
   },
-  messageIcon: {
+  documentLines: {
+    position: 'absolute',
+    top: 22,
+    left: 5,
+    right: 5,
+    height: 2,
+    backgroundColor: '#ddd',
+  },
+  emailIcon: {
     position: 'absolute',
     top: 15,
     right: 10,
     width: 24,
     height: 18,
   },
-  messageBody: {
+  emailBody: {
     width: 20,
     height: 14,
     backgroundColor: 'white',
@@ -220,7 +232,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#333',
   },
-  messageFlap: {
+  emailFlap: {
     position: 'absolute',
     top: 0,
     left: 10,
@@ -262,7 +274,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
-  phoneNumber: {
+  email: {
     color: '#333',
     fontSize: 16,
     fontWeight: '500',
@@ -329,4 +341,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OTPMobileVerification;
+export default OTPEmailVerification;
