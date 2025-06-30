@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 interface MobileVerificationSuccessProps {
-  navigation?: any; // Replace with your navigation type
+  navigation?: any; 
 }
 
 const MobileVerificationSuccess: React.FC<MobileVerificationSuccessProps> = ({ navigation }) => {

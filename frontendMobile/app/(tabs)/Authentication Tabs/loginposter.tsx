@@ -15,7 +15,7 @@ import {
   ImageBackground,
 } from 'react-native';
 
-export default function LoginScreen() {
+export default function PosterLoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 

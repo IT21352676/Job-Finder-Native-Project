@@ -15,7 +15,7 @@ import {
   ImageBackground,
 } from 'react-native';
 
-export default function LoginScreen() {
+export default function SeekerLoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 

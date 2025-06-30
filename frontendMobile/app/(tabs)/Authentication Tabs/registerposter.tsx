@@ -15,7 +15,7 @@ import {
   Linking,
 } from 'react-native';
 
-export default function SimpleRegistrationUI() {
+export default function PosterRegistrationScreen() {
   const [currentPage, setCurrentPage] = useState('register');
   const [formData, setFormData] = useState({
     firstName: '',
@@ -29,36 +29,13 @@ export default function SimpleRegistrationUI() {
   });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  
   };
 
   const handleRegister = () => {
-    setCurrentPage('success');
+  
   };
 
-
-
-  const handleBackToLogin = async () => {
-  const url = 'http://localhost:8081/login';
-  
-  try {
-    // Check if the URL can be opened
-    const supported = await Linking.canOpenURL(url);
-    
-    if (supported) {
-      // Open the URL in the device's default browser
-      await Linking.openURL(url);
-    } else {
-      Alert.alert('Error', 'Unable to open the URL');
-    }
-  } catch (error) {
-    console.error('Error opening URL:', error);
-    Alert.alert('Error', 'An error occurred while opening the URL');
-  }
-};
 
   if (currentPage === 'success') {
     return (
@@ -75,7 +52,6 @@ export default function SimpleRegistrationUI() {
             
             <TouchableOpacity 
               style={styles.registerButton}
-              onPress={handleBackToLogin}
               activeOpacity={0.8}
             >
               <Text style={styles.registerButtonText}>Back to Login</Text>

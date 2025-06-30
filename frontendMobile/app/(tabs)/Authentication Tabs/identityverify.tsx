@@ -34,15 +34,11 @@ const IdentityVerification: React.FC<IdentityVerificationProps> = ({ navigation 
 
 
   const handleChooseFromGallery = (): void => {
-    setShowUploadModal(false);
-    Alert.alert('Gallery', `Opening gallery to select ${currentCardType} side`);
-    // Add your gallery logic here
+   
   };
 
   const handleFinish = (): void => {
-    // Navigate to next screen or handle finish logic
-    console.log('Proceeding with selected card:', selectedCard);
-    // navigation.navigate('NextScreen');
+   
   };
 
   return (
