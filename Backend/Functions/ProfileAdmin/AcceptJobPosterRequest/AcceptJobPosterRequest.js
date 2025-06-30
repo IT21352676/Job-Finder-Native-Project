@@ -2,7 +2,7 @@ const connection = require("../../../Services/connection");
 
 async function acceptJobPosterRequest(req, res) {
   const sql =
-    "UPDATE `parttime_srilanka`.`job_poster` SET `ApprovedStatus` = 'approved' WHERE (`JobPosterID` = ?);";
+    "UPDATE `parttime_srilanka`.`job_poster` SET `ApprovedStatus` = 'approved' WHERE (`poster_id` = ?);";
 
   connection.query(sql, req.params.id, (err, result) => {
     if (err) {

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, message } from 'antd';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { Table, Button, Modal, message } from "antd";
+import axios from "axios";
 
 const JobSeekerViewComponent = ({
   requestDataUrl,
@@ -29,7 +29,7 @@ const JobSeekerViewComponent = ({
       const jsonData = await response.json();
       setData(jsonData);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
@@ -45,18 +45,20 @@ const JobSeekerViewComponent = ({
 
     try {
       const response = await fetch(
-        `${acceptUrl}/${selectedJobSeeker.UserId}`,
-        { method: 'PUT' }
+        `${acceptUrl}/${selectedJobSeeker.seeker_id}`,
+        {
+          method: "PUT",
+        }
       );
 
       if (response.ok) {
         message.success(successAcceptMessage);
-        fetchData(); 
+        fetchData();
       } else {
         message.error(failureMessage);
       }
     } catch (error) {
-      console.error('Error accepting job seeker:', error);
+      console.error("Error accepting job seeker:", error);
       message.error(failureMessage);
     } finally {
       setModalVisible(false);
@@ -64,20 +66,18 @@ const JobSeekerViewComponent = ({
   };
 
   const handleDecline = async () => {
-    console.log("Called")
+    console.log("Called");
     if (!selectedJobSeeker) return;
 
     try {
       const response = await axios.put(
-        `${declineUrl}/${selectedJobSeeker.UserId}`,
-       
+        `${declineUrl}/${selectedJobSeeker.seeker_id}`
       );
 
       if (response.status === 200) {
         message.success(successDeclineMessage);
-        fetchData(); 
+        fetchData();
       } else {
-        
         message.error(failureMessage);
       }
     } catch (error) {
@@ -88,18 +88,18 @@ const JobSeekerViewComponent = ({
   };
 
   const columns = [
-    { title: 'ID', dataIndex: 'UserId', key: 'UserId' },
-    { title: 'First Name', dataIndex: 'FirstName', key: 'FirstName' },
-    { title: 'Last Name', dataIndex: 'LastName', key: 'LastName' },
-    { title: 'Phone Number', dataIndex: 'TpNumber', key: 'TpNumber' },
+    { title: "ID", dataIndex: "seeker_id", key: "seeker_id" },
+    { title: "First Name", dataIndex: "firstname", key: "firstname" },
+    { title: "Last Name", dataIndex: "lastname", key: "lastname" },
+    { title: "Phone Number", dataIndex: "telnumber", key: "telnumber" },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
         <Button
           type="primary"
           onClick={() => onViewClick(record)}
-          style={{ background: '#FFA500', width: '100px' }}
+          style={{ background: "#FFA500", width: "100px" }}
         >
           View
         </Button>
@@ -110,18 +110,18 @@ const JobSeekerViewComponent = ({
   return (
     <div
       style={{
-        width: '80%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        width: "80%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <Table
         dataSource={data}
         columns={columns}
         loading={loading}
-        rowKey="UserId"
-        style={{ width: '80%' }}
+        rowKey="seeker_id"
+        style={{ width: "80%" }}
       />
 
       <Modal
@@ -130,7 +130,7 @@ const JobSeekerViewComponent = ({
         onCancel={() => setModalVisible(false)}
         centered
         width={1000}
-        bodyStyle={{ maxHeight: '70vh', overflowY: 'auto' }}
+        bodyStyle={{ maxHeight: "70vh", overflowY: "auto" }}
         footer={[
           declineButtonName && (
             <Button key="decline" onClick={handleDecline}>
@@ -145,36 +145,48 @@ const JobSeekerViewComponent = ({
         ]}
       >
         {selectedJobSeeker && (
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <div style={{ width: '50%' }}>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <div style={{ width: "50%" }}>
               <p>
-                <strong>User Id :</strong>{selectedJobSeeker.UserId}
+                <strong>User Id :</strong>
+                {selectedJobSeeker.seeker_id}
               </p>
-              
+
               <p>
-                <strong>Name :</strong> {selectedJobSeeker.FirstName} {selectedJobSeeker.LastName}
-              </p>
-              <p>
-                <strong>Phone Number :</strong> {selectedJobSeeker.TpNumber}
-              </p>
-              <p>
-                <strong>Birth Date :</strong> {new Date(selectedJobSeeker.BirthDay).toLocaleDateString()}
+                <strong>Name :</strong> {selectedJobSeeker.FirstName}{" "}
+                {selectedJobSeeker.lastname}
               </p>
               <p>
-                <strong>NIC :</strong> {selectedJobSeeker.Nic}
+                <strong>Phone Number :</strong> {selectedJobSeeker.telnumber}
               </p>
               <p>
-                <strong>Address : </strong>  {selectedJobSeeker.addFline}{selectedJobSeeker.addSLine},{selectedJobSeeker.city}
+                <strong>Birth Date :</strong>{" "}
+                {new Date(selectedJobSeeker.birthday).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>NIC :</strong> {selectedJobSeeker.nic}
+              </p>
+              <p>
+                <strong>Address : </strong> {selectedJobSeeker.addressLine},
+                {selectedJobSeeker.city}
               </p>
             </div>
-            <div style={{ width: '50%' }}>
+            <div style={{ width: "50%" }}>
               <p>
                 <strong></strong>
-                <img src={selectedJobSeeker.proofDoc_front} alt="Not Found" style={{ width: '60%' }} />
+                <img
+                  src={selectedJobSeeker.proofDoc_front}
+                  alt="Not Found"
+                  style={{ width: "60%" }}
+                />
               </p>
               <p>
                 <strong></strong>
-                <img src={selectedJobSeeker.proofDoc_back} alt="Not Found" style={{ width: '60%' }} />
+                <img
+                  src={selectedJobSeeker.proofDoc_back}
+                  alt="Not Found"
+                  style={{ width: "60%" }}
+                />
               </p>
             </div>
           </div>

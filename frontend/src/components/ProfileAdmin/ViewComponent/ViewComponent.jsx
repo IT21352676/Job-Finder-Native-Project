@@ -45,7 +45,7 @@ const ViewComponent = ({
 
     try {
       const response = await fetch(
-        `${acceptUrl}/${selectedJobPoster.JobPosterID}`,
+        `${acceptUrl}/${selectedJobPoster.poster_id}`,
         {
           method: "PUT",
         }
@@ -71,7 +71,7 @@ const ViewComponent = ({
 
     try {
       const response = await fetch(
-        `${declineUrl}/${selectedJobPoster.JobPosterID}`,
+        `${declineUrl}/${selectedJobPoster.poster_id}`,
         {
           method: "PUT",
         }
@@ -95,23 +95,23 @@ const ViewComponent = ({
   const columns = [
     {
       title: "ID",
-      dataIndex: "JobPosterID",
-      key: "JobPosterID",
+      dataIndex: "poster_id",
+      key: "poster_id",
     },
     {
       title: "Name",
-      dataIndex: "FirstName",
-      key: "FirstName",
+      dataIndex: "firstname",
+      key: "firstname",
     },
     {
       title: "Company",
-      dataIndex: "CompanyName",
-      key: "CompanyName",
+      dataIndex: "company",
+      key: "company",
     },
     {
       title: "Phone Number",
-      dataIndex: "TpNumber",
-      key: "TpNumber",
+      dataIndex: "contactNumber",
+      key: "contactNumber",
     },
     {
       title: "Actions",
@@ -170,22 +170,23 @@ const ViewComponent = ({
           <div style={{ display: "flex", flexDirection: "row" }}>
             <div style={{ width: "50%" }}>
               <p>
-                <strong>ID:</strong> {selectedJobPoster.JobPosterID}
+                <strong>ID:</strong> {selectedJobPoster.poster_id}
               </p>
               <p>
-                <strong>Name:</strong> {selectedJobPoster.FirstName} {selectedJobPoster.LastName}
+                <strong>Name:</strong> {selectedJobPoster.firstname}{" "}
+                {selectedJobPoster.lastname}
               </p>
               <p>
-                <strong>Company:</strong> {selectedJobPoster.CompanyName}
+                <strong>Company:</strong> {selectedJobPoster.company}
               </p>
               <p>
-                <strong>Phone Number:</strong> {selectedJobPoster.TpNumber}
+                <strong>Phone Number:</strong> {selectedJobPoster.contactNumber}
               </p>
               <p>
-                <strong>Email Address:</strong> {selectedJobPoster.EmailAddress}
+                <strong>Email Address:</strong> {selectedJobPoster.emailAddress}
               </p>
               <p>
-                <strong>City:</strong> {selectedJobPoster.city}
+                <strong>Address:</strong> {selectedJobPoster.address}
               </p>
             </div>
             <div style={{ width: "50%" }}>
