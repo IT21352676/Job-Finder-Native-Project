@@ -1,6 +1,6 @@
 // IdentityVerification.tsx
-import { Link } from 'expo-router';
-import React, { useState } from 'react';
+import { Link } from "expo-router";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,20 +10,22 @@ import {
   Dimensions,
   Modal,
   Alert,
-} from 'react-native';
+} from "react-native";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
-type CardType = 'FRONT' | 'BACK';
+type CardType = "FRONT" | "BACK";
 
 interface IdentityVerificationProps {
   navigation?: any; // Replace with your navigation type
 }
 
-const IdentityVerification: React.FC<IdentityVerificationProps> = ({ navigation }) => {
-  const [selectedCard, setSelectedCard] = useState<CardType>('FRONT');
+const IdentityVerification: React.FC<IdentityVerificationProps> = ({
+  navigation,
+}) => {
+  const [selectedCard, setSelectedCard] = useState<CardType>("FRONT");
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [currentCardType, setCurrentCardType] = useState<CardType>('FRONT');
+  const [currentCardType, setCurrentCardType] = useState<CardType>("FRONT");
 
   const handleCardSelect = (cardType: CardType): void => {
     setSelectedCard(cardType);
@@ -31,15 +33,9 @@ const IdentityVerification: React.FC<IdentityVerificationProps> = ({ navigation 
     setShowUploadModal(true);
   };
 
+  const handleChooseFromGallery = (): void => {};
 
-
-  const handleChooseFromGallery = (): void => {
-   
-  };
-
-  const handleFinish = (): void => {
-   
-  };
+  const handleFinish = (): void => {};
 
   return (
     <SafeAreaView style={styles.container}>
@@ -71,9 +67,9 @@ const IdentityVerification: React.FC<IdentityVerificationProps> = ({ navigation 
           <TouchableOpacity
             style={[
               styles.cardOption,
-              selectedCard === 'FRONT' && styles.selectedCard,
+              selectedCard === "FRONT" && styles.selectedCard,
             ]}
-            onPress={() => handleCardSelect('FRONT')}
+            onPress={() => handleCardSelect("FRONT")}
           >
             <View style={styles.cardIcon} />
             <Text style={styles.cardText}>FRONT</Text>
@@ -82,9 +78,9 @@ const IdentityVerification: React.FC<IdentityVerificationProps> = ({ navigation 
           <TouchableOpacity
             style={[
               styles.cardOption,
-              selectedCard === 'BACK' && styles.selectedCard,
+              selectedCard === "BACK" && styles.selectedCard,
             ]}
-            onPress={() => handleCardSelect('BACK')}
+            onPress={() => handleCardSelect("BACK")}
           >
             <View style={styles.cardIcon} />
             <Text style={styles.cardText}>BACK</Text>
@@ -92,10 +88,10 @@ const IdentityVerification: React.FC<IdentityVerificationProps> = ({ navigation 
         </View>
 
         {/* Finish Button */}
-        <Link href="/(tabs)/Authentication Tabs/askverificationtype">
-            <TouchableOpacity style={styles.finishButton}>
+        <Link href="/authentication/askverificationtype">
+          <TouchableOpacity style={styles.finishButton}>
             <Text style={styles.finishButtonText}>Finish</Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
         </Link>
       </View>
 
@@ -139,116 +135,116 @@ const IdentityVerification: React.FC<IdentityVerificationProps> = ({ navigation 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ff8c42',
+    backgroundColor: "#ff8c42",
   },
   content: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     margin: 20,
     borderRadius: 20,
     padding: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   iconContainer: {
     width: 80,
     height: 80,
-    backgroundColor: '#ff8c42',
+    backgroundColor: "#ff8c42",
     borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 30,
-    position: 'relative',
+    position: "relative",
   },
   faceIcon: {
     width: 40,
     height: 40,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    alignItems: "center",
+    justifyContent: "flex-start",
     paddingTop: 8,
   },
   faceHair: {
     width: 24,
     height: 16,
-    backgroundColor: '#333',
+    backgroundColor: "#333",
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
   scanFrame: {
-    position: 'absolute',
+    position: "absolute",
     top: -10,
     left: -10,
     right: -10,
     bottom: -10,
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: "white",
     borderRadius: 20,
   },
   cornerTopLeft: {
-    position: 'absolute',
+    position: "absolute",
     top: -2,
     left: -2,
     width: 15,
     height: 15,
     borderTopWidth: 2,
     borderLeftWidth: 2,
-    borderColor: 'white',
+    borderColor: "white",
   },
   cornerTopRight: {
-    position: 'absolute',
+    position: "absolute",
     top: -2,
     right: -2,
     width: 15,
     height: 15,
     borderTopWidth: 2,
     borderRightWidth: 2,
-    borderColor: 'white',
+    borderColor: "white",
   },
   cornerBottomLeft: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -2,
     left: -2,
     width: 15,
     height: 15,
     borderBottomWidth: 2,
     borderLeftWidth: 2,
-    borderColor: 'white',
+    borderColor: "white",
   },
   cornerBottomRight: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -2,
     right: -2,
     width: 15,
     height: 15,
     borderBottomWidth: 2,
     borderRightWidth: 2,
-    borderColor: 'white',
+    borderColor: "white",
   },
   subtitle: {
-    color: '#666',
+    color: "#666",
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 5,
   },
   title: {
-    color: '#333',
+    color: "#333",
     fontSize: 24,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
     marginBottom: 10,
   },
   description: {
-    color: '#666',
+    color: "#666",
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 20,
     marginBottom: 40,
   },
   cardOptions: {
-    flexDirection: 'row',
-    width: '100%',
+    flexDirection: "row",
+    width: "100%",
     gap: 15,
     marginBottom: 30,
   },
@@ -256,47 +252,47 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     borderWidth: 2,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
     borderRadius: 10,
-    alignItems: 'center',
-    backgroundColor: 'white',
+    alignItems: "center",
+    backgroundColor: "white",
   },
   selectedCard: {
-    borderColor: '#ff8c42',
-    backgroundColor: '#FFF5F3',
+    borderColor: "#ff8c42",
+    backgroundColor: "#FFF5F3",
   },
   cardIcon: {
     width: 30,
     height: 20,
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
     borderRadius: 3,
     marginBottom: 10,
   },
   cardText: {
     fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
+    color: "#333",
+    fontWeight: "500",
   },
   finishButton: {
-    width: '100%',
+    width: "100%",
     padding: 15,
-    backgroundColor: '#ff8c42',
+    backgroundColor: "#ff8c42",
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   finishButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   // Modal Styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 30,
@@ -304,33 +300,33 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
     marginBottom: 10,
   },
   modalSubtitle: {
     fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginBottom: 30,
   },
   uploadOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 15,
     paddingHorizontal: 20,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
     borderRadius: 10,
     marginBottom: 15,
   },
   uploadIcon: {
     width: 40,
     height: 40,
-    backgroundColor: '#ff8c42',
+    backgroundColor: "#ff8c42",
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 15,
   },
   uploadIconText: {
@@ -338,18 +334,18 @@ const styles = StyleSheet.create({
   },
   uploadOptionText: {
     fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
+    color: "#333",
+    fontWeight: "500",
   },
   cancelButton: {
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
   },
   cancelButtonText: {
-    color: '#666',
+    color: "#666",
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });
 
