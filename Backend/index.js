@@ -4,7 +4,6 @@ const app = express();
 const cors = require("cors");
 
 const http = require("http");
-const { Server } = require("socket.io");
 const routes = require("./Routes/routes");
 // const { messaging } = require("./Functions/MessagingModule/Messaging");
 // const { initSocket } = require("./socket");
