@@ -301,7 +301,7 @@ router.delete("/reject-job-cancel-request", (req, res) => {
 
 // AI features routes
 
-const generateJobRecommendations = require("../Functions/AIFeatures/jobRecommendation");
+const generateJobRecommendations = require("../Functions/AIFeatures/JobRecommendation");
 const generateUserRecommendations = require("../Functions/AIFeatures/UserRecommendation");
 
 router.post("/job-recommandation", (req, res) => {
