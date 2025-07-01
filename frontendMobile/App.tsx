@@ -13,12 +13,17 @@ type RootStackParamList = {
   "Job Poster Login": undefined;
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+// const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
+      <Stack.Navigator initialRouteName="LoginPoster">
+        <Stack.Screen name="LoginPoster" component={PosterLoginScreen} />
+      </Stack.Navigator>
+
+      {/* <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
           headerStyle: {
@@ -45,7 +50,7 @@ export default function App() {
           component={PosterLoginScreen}
           options={{ headerTitle: "Login as Job Poster" }}
         />
-      </Stack.Navigator>
+      </Stack.Navigator> */}
     </NavigationContainer>
   );
 }
