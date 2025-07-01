@@ -152,7 +152,7 @@ const OTPEmailVerification: React.FC<OTPEmailVerificationProps> = ({
         {/* Text Content */}
         <Text style={styles.title}>OTP Verification</Text>
         <Text style={styles.subtitle}>Email</Text>
-        <Text style={styles.greeting}>Hello John,</Text>
+        <Text style={styles.greeting}>Hello,</Text>
         <Text style={styles.description}>
           Thank you for registering with us. Please type the OTP that is shared
           to your email address.
