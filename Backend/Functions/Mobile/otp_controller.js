@@ -48,7 +48,7 @@ const sendEmailVerificationCode = async (req, res) => {
     await transporter.sendMail(mailOptions);
 
     const otpInsertQuery =
-      "INSER INTO parttime_srilanka.otp (email,otp,exp_date) VALUES (?,?,?)";
+      "INSERT INTO parttime_srilanka.otp (email,otp,exp_date) VALUES (?,?,?)";
 
     const otpData = [email, verificationCode, expiresAt];
 
