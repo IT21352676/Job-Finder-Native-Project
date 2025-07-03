@@ -8,11 +8,20 @@ import {
   SafeAreaView,
   Alert,
   StatusBar,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 
 const HomeDashboard = () => {
   const [activeNav, setActiveNav] = useState('Home');
+  const [chatVisible, setChatVisible] = useState(false);
+  const [messages, setMessages] = useState([
+    { id: 1, sender: 'bot', text: 'Welcome to Jobs! How can I help you?' },
+  ]);
+  const [inputText, setInputText] = useState('');
 
   const navigate = (section: string) => {
     Alert.alert('Navigation', `Navigating to ${section.toUpperCase()} section`);
@@ -20,6 +29,19 @@ const HomeDashboard = () => {
 
   const handleNavPress = (navItem: string) => {
     setActiveNav(navItem);
+  };
+
+  const sendMessage = () => {
+    if (!inputText.trim()) return;
+    setMessages((prev) => [...prev, { id: Date.now(), sender: 'user', text: inputText }]);
+    setInputText('');
+    // Simulated bot reply
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, sender: 'bot', text: 'Thanks for your message! I’ll assist you shortly.' },
+      ]);
+    }, 800);
   };
 
   const menuItems = [
@@ -42,7 +64,7 @@ const HomeDashboard = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FF8C42" barStyle="light-content" />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.greetingContainer}>
@@ -51,13 +73,13 @@ const HomeDashboard = () => {
           </View>
           <View style={styles.notificationIcons}>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="bell" size={18} color="white" />
+              <Feather name="bell" size={16} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="mail" size={18} color="white" />
+              <Feather name="mail" size={16} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="settings" size={18} color="white" />
+              <Feather name="settings" size={16} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -77,12 +99,76 @@ const HomeDashboard = () => {
               onPress={() => navigate(item.id)}
               activeOpacity={0.8}
             >
-              <Feather name={item.icon as any} size={26} color="white" />
+              <Feather name={item.icon as any} size={24} color="white" />
               <Text style={styles.menuText}>{item.text}</Text>
             </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
+
+      {/* Floating AI Bot */}
+      <TouchableOpacity
+        style={styles.floatingBot}
+        onPress={() => setChatVisible(true)}
+        activeOpacity={0.8}
+      >
+        <Feather name="message-square" size={26} color="white" />
+      </TouchableOpacity>
+
+      {/* Chat Modal */}
+      <Modal
+        visible={chatVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setChatVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.chatModal}>
+            <View style={styles.chatHeader}>
+              <Text style={styles.chatTitle}>AI Assistant</Text>
+              <TouchableOpacity onPress={() => setChatVisible(false)}>
+                <Feather name="x" size={20} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.chatMessages}>
+              {messages.map((msg) => (
+                <View
+                  key={msg.id}
+                  style={[
+                    styles.chatBubble,
+                    msg.sender === 'bot' ? styles.botBubble : styles.userBubble,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.chatText,
+                      msg.sender === 'bot' ? styles.botText : styles.userText,
+                    ]}
+                  >
+                    {msg.text}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={styles.inputRow}
+            >
+              <TextInput
+                value={inputText}
+                onChangeText={setInputText}
+                placeholder="Type your message"
+                style={styles.textInput}
+              />
+              <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+                <Feather name="send" size={20} color="white" />
+              </TouchableOpacity>
+            </KeyboardAvoidingView>
+          </View>
+        </View>
+      </Modal>
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
@@ -95,7 +181,7 @@ const HomeDashboard = () => {
           >
             <Feather
               name={item.icon as any}
-              size={22}
+              size={20}
               color={activeNav === item.id ? '#FF8C42' : '#999'}
               style={styles.navIcon}
             />
@@ -117,13 +203,8 @@ const HomeDashboard = () => {
 export default HomeDashboard;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  scrollContent: {
-    paddingBottom: 90,
-  },
+  container: { flex: 1, backgroundColor: '#F5F5F5' },
+  scrollContent: { paddingBottom: 90 },
   header: {
     backgroundColor: '#FF8C42',
     paddingTop: 40,
@@ -134,55 +215,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    elevation: 6,
   },
-  greetingContainer: {
-    flex: 1,
-  },
-  greeting: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: 'white',
-  },
-  userName: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.9)',
-    marginTop: 4,
-  },
-  notificationIcons: {
-    flexDirection: 'row',
-  },
+  greetingContainer: { flex: 1 },
+  greeting: { fontSize: 18, fontWeight: '600', color: 'white' },
+  userName: { fontSize: 16, color: 'rgba(255, 255, 255, 0.9)', marginTop: 2 },
+  notificationIcons: { flexDirection: 'row', gap: 10 },
   notificationIcon: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 12,
-    elevation: 2,
+    marginLeft: 10,
   },
   balanceCard: {
     backgroundColor: '#4CAF50',
     marginHorizontal: 20,
     marginTop: 20,
-    paddingVertical: 30,
-    paddingHorizontal: 25,
+    padding: 25,
     borderRadius: 20,
     alignItems: 'center',
-    elevation: 10,
+    elevation: 8,
   },
   balanceLabel: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: 6,
-    fontWeight: '500',
+    marginBottom: 5,
   },
-  balanceAmount: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: 'white',
-  },
+  balanceAmount: { fontSize: 32, fontWeight: 'bold', color: 'white' },
   menuGrid: {
     padding: 20,
     flexDirection: 'row',
@@ -191,51 +252,106 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     backgroundColor: '#FF8C42',
-    borderRadius: 18,
-    padding: 22,
+    borderRadius: 15,
+    padding: 20,
     width: '30%',
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    elevation: 5,
+    elevation: 4,
   },
   menuText: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 10,
+    fontWeight: '600',
     color: 'white',
     textAlign: 'center',
     marginTop: 8,
-    letterSpacing: 0.5,
   },
   bottomNav: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFF',
+    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    elevation: 12,
+    elevation: 10,
   },
-  navItem: {
+  navItem: { alignItems: 'center', flex: 1 },
+  navIcon: { marginBottom: 4 },
+  navText: { fontSize: 10, fontWeight: '500', color: '#999' },
+  navTextActive: { color: '#FF8C42' },
+  floatingBot: {
+    position: 'absolute',
+    bottom: 85,
+    right: 24,
+    backgroundColor: '#4CAF50',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
     alignItems: 'center',
+    elevation: 12,
+    zIndex: 10,
+  },
+  modalOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'flex-end',
   },
-  navIcon: {
-    marginBottom: 6,
+  chatModal: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '80%',
+    padding: 15,
   },
-  navText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#999',
+  chatHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
-  navTextActive: {
-    color: '#FF8C42',
+  chatTitle: { fontSize: 16, fontWeight: 'bold' },
+  chatMessages: { maxHeight: 250 },
+  chatBubble: {
+    padding: 10,
+    borderRadius: 12,
+    marginVertical: 4,
+    maxWidth: '80%',
+  },
+  botBubble: {
+    backgroundColor: '#E8F5E9',
+    alignSelf: 'flex-start',
+  },
+  userBubble: {
+    backgroundColor: '#FFECB3',
+    alignSelf: 'flex-end',
+  },
+  botText: { color: '#333' },
+  userText: { color: '#333' },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    paddingBottom: 10,
+  },
+  textInput: {
+    flex: 1,
+    backgroundColor: '#f2f2f2',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginRight: 10,
+  },
+  sendButton: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 20,
   },
 });
