@@ -22,4 +22,4 @@ function messaging(io) {
   });
 }
 
-module.exports = messaging;
+module.exports = { messaging };

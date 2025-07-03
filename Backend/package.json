@@ -25,6 +25,8 @@
     "otp-generator": "^4.0.1",
     "pdfkit": "^0.15.0",
     "sequelize": "^6.37.3",
+    "socket": "^1.0.21",
+    "socket.io": "^4.8.1",
     "twilio": "^4.21.0"
   }
 }
