@@ -42,7 +42,7 @@ const HomeDashboard = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FF8C42" barStyle="light-content" />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.greetingContainer}>
@@ -51,13 +51,13 @@ const HomeDashboard = () => {
           </View>
           <View style={styles.notificationIcons}>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="bell" size={16} color="white" />
+              <Feather name="bell" size={18} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="mail" size={16} color="white" />
+              <Feather name="mail" size={18} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="settings" size={16} color="white" />
+              <Feather name="settings" size={18} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -77,7 +77,7 @@ const HomeDashboard = () => {
               onPress={() => navigate(item.id)}
               activeOpacity={0.8}
             >
-              <Feather name={item.icon as any} size={24} color="white" />
+              <Feather name={item.icon as any} size={26} color="white" />
               <Text style={styles.menuText}>{item.text}</Text>
             </TouchableOpacity>
           ))}
@@ -95,7 +95,7 @@ const HomeDashboard = () => {
           >
             <Feather
               name={item.icon as any}
-              size={20}
+              size={22}
               color={activeNav === item.id ? '#FF8C42' : '#999'}
               style={styles.navIcon}
             />
@@ -134,48 +134,52 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    elevation: 6,
   },
   greetingContainer: {
     flex: 1,
   },
   greeting: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     color: 'white',
   },
   userName: {
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.9)',
-    marginTop: 2,
+    marginTop: 4,
   },
   notificationIcons: {
     flexDirection: 'row',
-    gap: 10,
   },
   notificationIcon: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 12,
+    elevation: 2,
   },
   balanceCard: {
     backgroundColor: '#4CAF50',
     marginHorizontal: 20,
     marginTop: 20,
-    padding: 25,
+    paddingVertical: 30,
+    paddingHorizontal: 25,
     borderRadius: 20,
     alignItems: 'center',
-    elevation: 8,
+    elevation: 10,
   },
   balanceLabel: {
-    fontSize: 16,
+    fontSize: 18,
     color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: 5,
+    marginBottom: 6,
+    fontWeight: '500',
   },
   balanceAmount: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
     color: 'white',
   },
@@ -187,48 +191,48 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     backgroundColor: '#FF8C42',
-    borderRadius: 15,
-    padding: 20,
+    borderRadius: 18,
+    padding: 22,
     width: '30%',
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    elevation: 4,
+    elevation: 5,
   },
   menuText: {
-    fontSize: 10,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '700',
     color: 'white',
     textAlign: 'center',
-    lineHeight: 12,
     marginTop: 8,
+    letterSpacing: 0.5,
   },
   bottomNav: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FFF',
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    elevation: 10,
+    elevation: 12,
   },
   navItem: {
     alignItems: 'center',
     flex: 1,
   },
   navIcon: {
-    marginBottom: 4,
+    marginBottom: 6,
   },
   navText: {
-    fontSize: 10,
-    fontWeight: '500',
+    fontSize: 11,
+    fontWeight: '600',
     color: '#999',
   },
   navTextActive: {
