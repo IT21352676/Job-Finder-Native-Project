@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
 
 const WalletApp = () => {
   const [modalVisible, setModalVisible] = useState(true);
@@ -39,26 +40,20 @@ const WalletApp = () => {
     closeModal();
   };
 
-  const setActiveNavItem = (navItem: React.SetStateAction<string>) => {
+  const setActiveNavItem = (navItem: string) => {
     setActiveNav(navItem);
   };
 
   type NavItemProps = {
-  icon: string;
-  text: string;
-  isActive: boolean;
-  onPress: () => void;
-};
+    icon: keyof typeof Feather.glyphMap;
+    text: string;
+    isActive: boolean;
+    onPress: () => void;
+  };
 
   const NavItem: React.FC<NavItemProps> = ({ icon, text, isActive, onPress }) => (
-    <TouchableOpacity
-      style={styles.navItem}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <Text style={[styles.navIcon, isActive && styles.activeNavIcon]}>
-        {icon}
-      </Text>
+    <TouchableOpacity style={styles.navItem} onPress={onPress} activeOpacity={0.7}>
+      <Feather name={icon} size={20} color={isActive ? '#FF8C42' : '#999'} />
       <Text style={[styles.navText, isActive && styles.activeNavText]}>
         {text}
       </Text>
@@ -72,7 +67,7 @@ const WalletApp = () => {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={goBack}>
-          <Text style={styles.backBtnText}>←</Text>
+          <Feather name="arrow-left" size={24} color="white" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>My Wallet</Text>
@@ -92,25 +87,25 @@ const WalletApp = () => {
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <NavItem
-          icon="🏠"
+          icon="home"
           text="Home"
           isActive={activeNav === 'Home'}
           onPress={() => setActiveNavItem('Home')}
         />
         <NavItem
-          icon="💼"
+          icon="briefcase"
           text="Jobs"
           isActive={activeNav === 'Jobs'}
           onPress={() => setActiveNavItem('Jobs')}
         />
         <NavItem
-          icon="💳"
+          icon="credit-card"
           text="Wallet"
           isActive={activeNav === 'Wallet'}
           onPress={() => setActiveNavItem('Wallet')}
         />
         <NavItem
-          icon="👤"
+          icon="user"
           text="Profile"
           isActive={activeNav === 'Profile'}
           onPress={() => setActiveNavItem('Profile')}
@@ -172,10 +167,6 @@ const styles = StyleSheet.create({
     marginRight: 15,
     padding: 5,
   },
-  backBtnText: {
-    color: 'white',
-    fontSize: 20,
-  },
   headerContent: {
     flex: 1,
   },
@@ -233,13 +224,6 @@ const styles = StyleSheet.create({
   },
   navItem: {
     alignItems: 'center',
-  },
-  navIcon: {
-    fontSize: 20,
-    color: '#999',
-  },
-  activeNavIcon: {
-    color: '#FF8C42',
   },
   navText: {
     fontSize: 10,

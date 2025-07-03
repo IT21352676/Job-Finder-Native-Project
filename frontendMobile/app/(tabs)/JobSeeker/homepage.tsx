@@ -9,45 +9,40 @@ import {
   Alert,
   StatusBar,
 } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
 
 const HomeDashboard = () => {
   const [activeNav, setActiveNav] = useState('Home');
 
   const navigate = (section: string) => {
-    Alert.alert('Navigation', `Navigating to ${section.charAt(0).toUpperCase() + section.slice(1)} section`);
-    console.log(`Navigate to: ${section}`);
+    Alert.alert('Navigation', `Navigating to ${section.toUpperCase()} section`);
   };
 
-  const handleNavPress = (navItem: React.SetStateAction<string>) => {
+  const handleNavPress = (navItem: string) => {
     setActiveNav(navItem);
-    console.log(`Active section: ${navItem}`);
   };
 
   const menuItems = [
-    { id: 'jobs', icon: '💼', text: 'JOBS' },
-    { id: 'customers', icon: '👥', text: 'CUSTOMERS' },
-    { id: 'products', icon: '📦', text: 'PRODUCTS' },
-    { id: 'wallet', icon: '💳', text: 'MY WALLET' },
-    { id: 'chat', icon: '💬', text: 'CHAT WITH US' },
-    { id: 'profile', icon: '👤', text: 'MY PROFILE' },
+    { id: 'jobs', icon: 'briefcase', text: 'JOBS' },
+    { id: 'customers', icon: 'users', text: 'CUSTOMERS' },
+    { id: 'products', icon: 'package', text: 'PRODUCTS' },
+    { id: 'wallet', icon: 'credit-card', text: 'MY WALLET' },
+    { id: 'chat', icon: 'message-circle', text: 'CHAT WITH US' },
+    { id: 'profile', icon: 'user', text: 'MY PROFILE' },
   ];
 
   const navItems = [
-    { id: 'Home', icon: '🏠', text: 'Home' },
-    { id: 'Jobs', icon: '💼', text: 'Jobs' },
-    { id: 'Wallet', icon: '💳', text: 'Wallet' },
-    { id: 'Profile', icon: '👤', text: 'Profile' },
+    { id: 'Home', icon: 'home', text: 'Home' },
+    { id: 'Jobs', icon: 'briefcase', text: 'Jobs' },
+    { id: 'Wallet', icon: 'credit-card', text: 'Wallet' },
+    { id: 'Profile', icon: 'user', text: 'Profile' },
   ];
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FF8C42" barStyle="light-content" />
-      
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.greetingContainer}>
@@ -56,13 +51,13 @@ const HomeDashboard = () => {
           </View>
           <View style={styles.notificationIcons}>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Text style={styles.notificationEmoji}>🔔</Text>
+              <Feather name="bell" size={16} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Text style={styles.notificationEmoji}>📧</Text>
+              <Feather name="mail" size={16} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Text style={styles.notificationEmoji}>⚙️</Text>
+              <Feather name="settings" size={16} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -82,7 +77,7 @@ const HomeDashboard = () => {
               onPress={() => navigate(item.id)}
               activeOpacity={0.8}
             >
-              <Text style={styles.menuIcon}>{item.icon}</Text>
+              <Feather name={item.icon as any} size={24} color="white" />
               <Text style={styles.menuText}>{item.text}</Text>
             </TouchableOpacity>
           ))}
@@ -98,11 +93,18 @@ const HomeDashboard = () => {
             onPress={() => handleNavPress(item.id)}
             activeOpacity={0.7}
           >
-            <Text style={styles.navIcon}>{item.icon}</Text>
-            <Text style={[
-              styles.navText,
-              activeNav === item.id && styles.navTextActive
-            ]}>
+            <Feather
+              name={item.icon as any}
+              size={20}
+              color={activeNav === item.id ? '#FF8C42' : '#999'}
+              style={styles.navIcon}
+            />
+            <Text
+              style={[
+                styles.navText,
+                activeNav === item.id && styles.navTextActive,
+              ]}
+            >
               {item.text}
             </Text>
           </TouchableOpacity>
@@ -112,16 +114,15 @@ const HomeDashboard = () => {
   );
 };
 
+export default HomeDashboard;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  scrollView: {
-    flex: 1,
-  },
   scrollContent: {
-    paddingBottom: 90, // Space for bottom nav
+    paddingBottom: 90,
   },
   header: {
     backgroundColor: '#FF8C42',
@@ -133,14 +134,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
   },
   greetingContainer: {
     flex: 1,
@@ -167,9 +160,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  notificationEmoji: {
-    fontSize: 16,
-  },
   balanceCard: {
     backgroundColor: '#4CAF50',
     marginHorizontal: 20,
@@ -177,13 +167,6 @@ const styles = StyleSheet.create({
     padding: 25,
     borderRadius: 20,
     alignItems: 'center',
-    shadowColor: '#4CAF50',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
     elevation: 8,
   },
   balanceLabel: {
@@ -195,7 +178,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 10,
   },
   menuGrid: {
     padding: 20,
@@ -212,18 +194,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    shadowColor: '#FF8C42',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
     elevation: 4,
-  },
-  menuIcon: {
-    fontSize: 24,
-    marginBottom: 8,
   },
   menuText: {
     fontSize: 10,
@@ -231,6 +202,7 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     lineHeight: 12,
+    marginTop: 8,
   },
   bottomNav: {
     position: 'absolute',
@@ -245,13 +217,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
     elevation: 10,
   },
   navItem: {
@@ -259,7 +224,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   navIcon: {
-    fontSize: 20,
     marginBottom: 4,
   },
   navText: {
@@ -271,5 +235,3 @@ const styles = StyleSheet.create({
     color: '#FF8C42',
   },
 });
-
-export default HomeDashboard;

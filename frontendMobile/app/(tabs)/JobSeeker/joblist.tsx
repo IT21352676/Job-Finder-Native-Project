@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   StatusBar,
   Alert,
 } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
 
 const jobs = [
   {
@@ -44,19 +45,32 @@ const jobs = [
 ];
 
 const JobsList = () => {
+  const [activeNav, setActiveNav] = useState('Jobs');
+
   const goBack = () => Alert.alert('Navigation', 'Go back');
 
   const newPosting = () => Alert.alert('Action', 'Create new job posting');
 
-  const applyJob = (jobTitle: string) => Alert.alert('Apply', `Applied for ${jobTitle}`);
+  const applyJob = (jobTitle: string) =>
+    Alert.alert('Apply', `Applied for ${jobTitle}`);
+
+  const handleNavPress = (navItem: string) => {
+    setActiveNav(navItem);
+    Alert.alert('Navigation', `Go to ${navItem}`);
+  };
 
   const renderStars = (rating: number) => {
     const full = Math.floor(rating);
-    const stars = Array.from({ length: 5 }, (_, i) =>
-      i < full ? '★' : '☆'
-    );
+    const stars = Array.from({ length: 5 }, (_, i) => (i < full ? '★' : '☆'));
     return stars.join(' ');
   };
+
+  const navItems = [
+    { id: 'Home', icon: 'home', text: 'Home' },
+    { id: 'Jobs', icon: 'briefcase', text: 'Jobs' },
+    { id: 'Wallet', icon: 'credit-card', text: 'Wallet' },
+    { id: 'Profile', icon: 'user', text: 'Profile' },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -65,8 +79,8 @@ const JobsList = () => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={goBack}>
-            <Text style={styles.backBtn}>←</Text>
+          <TouchableOpacity style={styles.backBtn} onPress={goBack}>
+            <Feather name="arrow-left" size={20} color="white" />
           </TouchableOpacity>
           <View>
             <Text style={styles.headerTitle}>Jobs</Text>
@@ -106,13 +120,43 @@ const JobsList = () => {
               <Text style={styles.rating}>
                 {renderStars(job.rating)} ({job.rating.toFixed(1)})
               </Text>
-              <TouchableOpacity onPress={() => applyJob(job.title)} style={styles.applyBtn}>
+              <TouchableOpacity
+                onPress={() => applyJob(job.title)}
+                style={styles.applyBtn}
+              >
                 <Text style={styles.applyText}>Apply</Text>
               </TouchableOpacity>
             </View>
           </View>
         ))}
       </ScrollView>
+
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        {navItems.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={styles.navItem}
+            onPress={() => handleNavPress(item.id)}
+            activeOpacity={0.7}
+          >
+            <Feather
+              name={item.icon as any}
+              size={20}
+              color={activeNav === item.id ? '#FF8C42' : '#999'}
+              style={styles.navIcon}
+            />
+            <Text
+              style={[
+                styles.navText,
+                activeNav === item.id && styles.navTextActive,
+              ]}
+            >
+              {item.text}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </SafeAreaView>
   );
 };
@@ -128,6 +172,7 @@ const JobDetail: React.FC<JobDetailProps> = ({ label, value }) => (
     <Text style={styles.detailValue}>{value}</Text>
   </View>
 );
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -242,6 +287,36 @@ const styles = StyleSheet.create({
   applyText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  bottomNav: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    elevation: 10,
+  },
+  navItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  navIcon: {
+    marginBottom: 4,
+  },
+  navText: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: '#999',
+  },
+  navTextActive: {
+    color: '#FF8C42',
   },
 });
 

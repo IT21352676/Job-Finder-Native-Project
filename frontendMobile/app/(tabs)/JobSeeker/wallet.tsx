@@ -9,76 +9,70 @@ import {
   Alert,
   StatusBar,
 } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
 
-const WalletScreen = () => {
-  const [activeNav, setActiveNav] = useState('Wallet');
+const transactionData = [
+  {
+    id: 1,
+    date: '2024/06/28',
+    amount: 'Rs. 8,500.00',
+    points: '+30 Points',
+    totalAmount: 'Rs. 10,000.00',
+  },
+  {
+    id: 2,
+    date: '2024/06/26',
+    amount: 'Rs. 9,000.00',
+    points: '+35 Points',
+    totalAmount: 'Rs. 9,500.00',
+  },
+  {
+    id: 3,
+    date: '2024/06/10',
+    amount: 'Rs. 500.00',
+    points: '+15 Points',
+    totalAmount: 'Rs. 1,000.00',
+  },
+  {
+    id: 4,
+    date: '2024/05/28',
+    amount: 'Rs. 2,400.00',
+    points: '+2 Points',
+    totalAmount: 'Rs. 2,500.00',
+  },
+];
+
+const navItems = [
+  { id: 'Home', icon: 'home', text: 'Home' },
+  { id: 'Jobs', icon: 'briefcase', text: 'Jobs' },
+  { id: 'Wallet', icon: 'credit-card', text: 'Wallet' },
+  { id: 'Profile', icon: 'user', text: 'Profile' },
+];
+
+const WalletScreen: React.FC = () => {
+  const [activeNav, setActiveNav] = useState<string>('Wallet');
 
   const goBack = () => {
     Alert.alert('Navigation', 'Going back to previous screen');
-    console.log('Go back pressed');
   };
 
   const withdraw = () => {
-    Alert.alert('Withdraw', 'Withdraw functionality would be implemented here');
-    console.log('Withdraw pressed');
+    Alert.alert('Withdraw', 'Withdraw functionality initiated');
   };
 
-  const handleNavPress = (navItem: React.SetStateAction<string>) => {
+  const handleNavPress = (navItem: string) => {
     setActiveNav(navItem);
-    console.log(`Active section: ${navItem}`);
   };
-
-  const transactionData = [
-    {
-      id: 1,
-      date: '2024/06/28',
-      amount: '8500.00',
-      points: '+30 Points',
-      totalAmount: '10000.00'
-    },
-    {
-      id: 2,
-      date: '2024/06/26',
-      amount: '9000.00',
-      points: '+35 Points',
-      totalAmount: '9500.00'
-    },
-    {
-      id: 3,
-      date: '2024/06/10',
-      amount: '500.00',
-      points: '+15 Points',
-      totalAmount: '1000.00'
-    },
-    {
-      id: 4,
-      date: '2024/05/28',
-      amount: '2400.00',
-      points: '+2 Points',
-      totalAmount: '2500.00'
-    },
-  ];
-
-  const navItems = [
-    { id: 'Home', icon: '🏠', text: 'Home' },
-    { id: 'Jobs', icon: '💼', text: 'Jobs' },
-    { id: 'Wallet', icon: '💳', text: 'Wallet' },
-    { id: 'Profile', icon: '👤', text: 'Profile' },
-  ];
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FF8C42" barStyle="light-content" />
-      
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backBtn} onPress={goBack}>
-            <Text style={styles.backBtnText}>←</Text>
+            <Feather name="arrow-left" size={20} color="white" />
           </TouchableOpacity>
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>My Wallet</Text>
@@ -86,13 +80,13 @@ const WalletScreen = () => {
           </View>
         </View>
 
-        {/* Wallet Card */}
+        {/* Wallet Card + Withdraw */}
         <View style={styles.walletCard}>
           <Text style={styles.balanceDate}>Balance on 2024/06/28</Text>
-          
+
           <View style={styles.balanceContainer}>
             <View style={styles.balanceOverlay} />
-            <Text style={styles.balanceAmount}>Rs. 138,200.00</Text>
+            <Text style={styles.balanceAmount}>Rs. 138,200.00</Text>
             <Text style={styles.balancePoints}>⭐ 58</Text>
           </View>
 
@@ -101,24 +95,24 @@ const WalletScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Transaction History */}
+        {/* Recent Transactions */}
         <View style={styles.transactionHistory}>
-          <Text style={styles.historyTitle}>Transaction History</Text>
-          
-          {transactionData.map((transaction) => (
-            <View key={transaction.id} style={styles.transactionItem}>
+          <Text style={styles.historyTitle}>Recent Transactions</Text>
+
+          {transactionData.map((t) => (
+            <View key={t.id} style={styles.transactionItem}>
               <View style={styles.transactionInfo}>
                 <View style={styles.transactionIcon}>
                   <Text style={styles.pointsIcon}>⭐</Text>
                 </View>
                 <View>
-                  <Text style={styles.transactionDate}>{transaction.date}</Text>
-                  <Text style={styles.transactionAmount}>{transaction.amount}</Text>
+                  <Text style={styles.transactionDate}>{t.date}</Text>
+                  <Text style={styles.transactionAmount}>{t.amount}</Text>
                 </View>
               </View>
               <View style={styles.transactionRight}>
-                <Text style={styles.transactionStatus}>{transaction.points}</Text>
-                <Text style={styles.transactionAmount}>{transaction.totalAmount}</Text>
+                <Text style={styles.transactionStatus}>{t.points}</Text>
+                <Text style={styles.transactionAmount}>{t.totalAmount}</Text>
               </View>
             </View>
           ))}
@@ -134,11 +128,12 @@ const WalletScreen = () => {
             onPress={() => handleNavPress(item.id)}
             activeOpacity={0.7}
           >
-            <Text style={styles.navIcon}>{item.icon}</Text>
-            <Text style={[
-              styles.navText,
-              activeNav === item.id && styles.navTextActive
-            ]}>
+            <Feather
+              name={item.icon as any}
+              size={20}
+              color={activeNav === item.id ? '#FF8C42' : '#999'}
+            />
+            <Text style={[styles.navText, activeNav === item.id && styles.navTextActive]}>
               {item.text}
             </Text>
           </TouchableOpacity>
@@ -148,16 +143,15 @@ const WalletScreen = () => {
   );
 };
 
+export default WalletScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  scrollView: {
-    flex: 1,
-  },
   scrollContent: {
-    paddingBottom: 90, // Space for bottom nav
+    paddingBottom: 100,
   },
   header: {
     backgroundColor: '#FF8C42',
@@ -168,17 +162,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
   },
   backBtn: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
     borderRadius: 15,
     width: 30,
     height: 30,
@@ -186,54 +172,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 15,
   },
-  backBtnText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  headerContent: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 2,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.9)',
-  },
+  headerContent: { flex: 1 },
+  headerTitle: { color: 'white', fontSize: 24, fontWeight: 'bold' },
+  headerSubtitle: { color: 'rgba(255,255,255,0.9)', fontSize: 14 },
+
   walletCard: {
-    backgroundColor: '#FFFFFF',
-    marginHorizontal: 20,
-    marginTop: 20,
+    backgroundColor: '#fff',
+    margin: 20,
     padding: 25,
     borderRadius: 20,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 8,
+    elevation: 6,
   },
-  balanceDate: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 15,
-  },
+  balanceDate: { fontSize: 12, color: '#666', marginBottom: 10 },
   balanceContainer: {
     backgroundColor: '#FF8C42',
     padding: 20,
     borderRadius: 15,
-    marginBottom: 20,
-    alignItems: 'center',
-    width: '100%',
     position: 'relative',
-    overflow: 'hidden',
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   balanceOverlay: {
     position: 'absolute',
@@ -241,141 +200,65 @@ const styles = StyleSheet.create({
     right: -20,
     width: 60,
     height: 120,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 30,
   },
   balanceAmount: {
+    color: 'white',
     fontSize: 36,
     fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 5,
   },
-  balancePoints: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
+  balancePoints: { color: 'rgba(255,255,255,0.8)', fontSize: 14 },
   withdrawBtn: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 15,
+    paddingVertical: 12,
     paddingHorizontal: 40,
     borderRadius: 25,
-    alignItems: 'center',
-    shadowColor: '#4CAF50',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
   },
-  withdrawBtnText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  withdrawBtnText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+
   transactionHistory: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#fff',
     marginHorizontal: 20,
-    marginTop: 20,
     padding: 20,
     borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 8,
+    elevation: 6,
   },
-  historyTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
-  },
+  historyTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 15 },
+
   transactionItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    marginBottom: 15,
   },
-  transactionInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flex: 1,
-  },
+  transactionInfo: { flexDirection: 'row', alignItems: 'center', flex: 1 },
   transactionIcon: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#FFF3E0',
+    backgroundColor: '#fff3e0',
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 10,
   },
-  pointsIcon: {
-    color: '#FF8C42',
-    fontSize: 14,
-  },
-  transactionDate: {
-    fontSize: 12,
-    color: '#666',
-  },
-  transactionAmount: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  transactionRight: {
-    alignItems: 'flex-end',
-  },
-  transactionStatus: {
-    fontSize: 12,
-    color: '#4CAF50',
-    marginBottom: 2,
-  },
+  pointsIcon: { fontSize: 14, color: '#FF8C42' },
+  transactionDate: { fontSize: 12, color: '#666' },
+  transactionAmount: { fontSize: 14, fontWeight: 'bold', color: '#333' },
+  transactionRight: { alignItems: 'flex-end' },
+  transactionStatus: { fontSize: 12, color: '#4CAF50' },
+
   bottomNav: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    backgroundColor: '#fff',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 10,
+    paddingVertical: 15,
+    elevation: 6,
   },
-  navItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  navIcon: {
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  navText: {
-    fontSize: 10,
-    fontWeight: '500',
-    color: '#999',
-  },
-  navTextActive: {
-    color: '#FF8C42',
-  },
+  navItem: { alignItems: 'center' },
+  navText: { fontSize: 10, color: '#999' },
+  navTextActive: { color: '#FF8C42' },
 });
-
-export default WalletScreen;
