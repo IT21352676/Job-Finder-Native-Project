@@ -28,6 +28,7 @@ app.use("/", routes);
 
 app.use("/mobile/auth", require("./Routes/mobileRoutes/authentication"));
 app.use("/mobile/otp", require("./Routes/mobileRoutes/otp"));
+app.use("/mobile/secured", require("./Routes/mobileRoutes/jobSeekerRoutes"));
 
 app.listen(process.env.PORT, () => {
   console.log("Server started in port: ", process.env.PORT);
