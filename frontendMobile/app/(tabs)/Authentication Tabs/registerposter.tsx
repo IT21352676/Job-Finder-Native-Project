@@ -203,7 +203,7 @@ export default function PosterRegistrationScreen() {
             </View>
 
             {/* Register Button */}
-            <Link href="/(tabs)/identityverify">
+            <Link href="/(tabs)/Authentication Tabs/identityverify">
                 <TouchableOpacity 
                 style={styles.registerButton}
                 activeOpacity={0.8}
