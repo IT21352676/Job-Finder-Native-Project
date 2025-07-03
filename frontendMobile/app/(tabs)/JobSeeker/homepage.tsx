@@ -312,6 +312,11 @@ const styles = StyleSheet.create({
     maxHeight: '80%',
     padding: 15,
   },
+
+  chatText: {
+  fontSize: 14,
+  lineHeight: 20,
+  },
   chatHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
