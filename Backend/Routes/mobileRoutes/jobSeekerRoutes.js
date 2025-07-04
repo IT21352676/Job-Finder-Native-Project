@@ -1,8 +1,12 @@
 const router = require("express").Router();
 const {
-  addPersonalInfo,
+  addSkills,
+  addTimeAvailability,
+  addReview,
 } = require("../../Functions/JobSeeker/JobSeekerProfile");
 
-router.get("/job-seeker-addInfo", ...addPersonalInfo);
+router.put("/job-seeker/add-skills", ...addSkills);
+router.put("/job-seeker/add-time-availability", ...addTimeAvailability);
+router.post("/job-seeker/add-review", ...addReview);
 
 module.exports = router;
