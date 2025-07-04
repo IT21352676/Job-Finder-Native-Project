@@ -110,6 +110,17 @@ const updatePersonalInfoHandler = async (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
+  connection.query(
+    "select * from parttime_srilanka.job_seeker where seeker_id = ?",
+    [req.body.seeker_id],
+    (err, data) => {
+      if (err) return res.json(err);
+      if (data.length <= 0) {
+        return res.status(404).json({ error: "No user found" });
+      }
+    }
+  );
+
   connection.query(updateQuery, values, (err, data) => {
     if (err) return res.json(err);
     return res.json("Personal information updated successfully");
@@ -127,6 +138,17 @@ const addSkillsHandler = async (req, res) => {
   if (!req.body.skills || !req.body.seeker_id) {
     return res.status(400).json({ error: "Skills and seeker_id are required" });
   }
+
+  connection.query(
+    "select * from parttime_srilanka.job_seeker where seeker_id = ?",
+    [req.body.seeker_id],
+    (err, data) => {
+      if (err) return res.json(err);
+      if (data.length <= 0) {
+        return res.status(404).json({ error: "No user found" });
+      }
+    }
+  );
 
   connection.query(updateQuery, values, (err, data) => {
     if (err) return res.json(err);
@@ -147,6 +169,17 @@ const addTimeAvailabilityHandler = async (req, res) => {
       .status(400)
       .json({ error: "Time availability and seeker_id are required" });
   }
+
+  connection.query(
+    "select * from parttime_srilanka.job_seeker where seeker_id = ?",
+    [req.body.seeker_id],
+    (err, data) => {
+      if (err) return res.json(err);
+      if (data.length <= 0) {
+        return res.status(404).json({ error: "No user found" });
+      }
+    }
+  );
 
   connection.query(updateQuery, values, (err, data) => {
     if (err) return res.json(err);
