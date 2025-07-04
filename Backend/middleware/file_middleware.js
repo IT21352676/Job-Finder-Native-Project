@@ -1,6 +1,8 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { error } = require("console");
+const mime = require("mime");
 
 // Ensure uploads directory exists
 const uploadDir = "uploads/";
@@ -46,4 +48,14 @@ const upload = multer({
   },
 });
 
-module.exports = upload;
+const retrieve = (filename) => {
+  const filePath = path.join(uploadDir, filename);
+  const mimeType = mime.default.getType(filePath);
+  if (fs.existsSync(filePath)) {
+    return { data: fs.readFileSync(filePath), mimeType };
+  } else {
+    return null;
+  }
+};
+
+module.exports = { upload, retrieve };
