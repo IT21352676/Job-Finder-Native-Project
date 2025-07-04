@@ -1,6 +1,7 @@
 const { upload, retrieve } = require("../../middleware/file_middleware");
 const { authenticateToken } = require("../Middlewares/TokenAuth");
 const connection = require("./../../Services/connection");
+const bcrypt = require("bcrypt");
 
 const uploadProfilePictureHandler = async (req, res) => {
   const updateQuery =
@@ -59,7 +60,7 @@ const retrieveProfilePictureHandler = async (req, res) => {
         "Content-Type": fileBuffer.mimeType,
         "Content-Length": fileBuffer.data.length,
       });
-      res.end(fileBuffer.data); // ✅ Send only the buffer
+      res.end(fileBuffer.data);
     } else {
       res.status(404).json({ error: "File not found" });
     }
@@ -74,6 +75,8 @@ const updatePersonalInfoHandler = async (req, res) => {
   const updateQuery =
     "UPDATE parttime_srilanka.job_seeker SET email = ?, firstname = ?, lastname = ?, nic = ?, birthday = ?, gender = ?, telnumber = ?, addressLine = ?, city = ?, province = ?, password = ?, status = ?, activeStatus = ? WHERE seeker_id = ?;";
 
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
   const values = [
     req.body.email,
     req.body.firstname,
@@ -85,7 +88,7 @@ const updatePersonalInfoHandler = async (req, res) => {
     req.body.addressLine,
     req.body.city,
     req.body.province,
-    req.body.password,
+    hashedPassword,
     req.body.status,
     req.body.activeStatus,
     req.body.seeker_id,
