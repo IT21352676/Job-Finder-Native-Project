@@ -1,4 +1,3 @@
-// OTPEmailVerification.tsx
 import { Link, router } from "expo-router";
 import React, { useState, useRef } from "react";
 import {
@@ -30,6 +29,7 @@ const OTPEmailVerification: React.FC<OTPEmailVerificationProps> = ({
   const otpRefs = useRef<TextInput[]>([]);
 
   const { email } = useLocalSearchParams();
+  console.log("Email from params:", email);
 
   const handleOtpChange = (value: string, index: number): void => {
     const newOtp = [...otp];
@@ -104,7 +104,7 @@ const OTPEmailVerification: React.FC<OTPEmailVerificationProps> = ({
           },
           body: JSON.stringify({
             email: email,
-            otp: otp,
+            otp: otpValue,
           }),
         });
 

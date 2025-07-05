@@ -464,14 +464,14 @@ export default function JobSeekerRegistrationUI() {
             </View>
 
             {/* Register Button */}
-            <Link href="/authentication/identityverify">
-              <TouchableOpacity
-                style={styles.registerButton}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.registerButtonText}>Register</Text>
-              </TouchableOpacity>
-            </Link>
+
+            <TouchableOpacity
+              style={styles.registerButton}
+              activeOpacity={0.8}
+              onPress={handleRegister}
+            >
+              <Text style={styles.registerButtonText}>Register</Text>
+            </TouchableOpacity>
 
             {/* Already have an account section */}
             <View style={styles.loginSection}>
