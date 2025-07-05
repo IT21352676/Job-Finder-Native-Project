@@ -83,7 +83,7 @@ const MobileVerificationSuccess: React.FC<MobileVerificationSuccessProps> = ({ n
 
         {/* Back to Login Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleBackToLogin}>
-          <Link href='/(tabs)/registerseeker'><Text style={styles.loginButtonText}>Back to Login</Text></Link> 
+          <Link href='/(tabs)/Authentication Tabs/registerseeker'><Text style={styles.loginButtonText}>Back to Login</Text></Link> 
         </TouchableOpacity>
       </View>
     </SafeAreaView>
