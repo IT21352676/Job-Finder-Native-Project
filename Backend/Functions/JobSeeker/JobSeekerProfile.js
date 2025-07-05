@@ -3,6 +3,9 @@ const { authenticateToken } = require("../Middlewares/TokenAuth");
 const connection = require("./../../Services/connection");
 const bcrypt = require("bcrypt");
 
+const fs = require("fs");
+const path = require("path");
+
 const uploadProfilePictureHandler = async (req, res) => {
   const updateQuery =
     "UPDATE parttime_srilanka.job_seeker SET profile_picture = ? WHERE seeker_id = ?;";
@@ -11,30 +14,44 @@ const uploadProfilePictureHandler = async (req, res) => {
     if (err) {
       return res.status(400).json({ error: err.message });
     }
+
+    if (!req.body.seeker_id) {
+      if (req.file) {
+        fs.unlink(path.join("uploads", req.file.filename), () => {});
+      }
+      return res.status(400).json({ error: "Seeker ID is required" });
+    }
+
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const values = [req.file.filename, req.body.seeker_id];
-    if (!req.body.seeker_id) {
-      return res.status(400).json({ error: "Seeker ID is required" });
-    }
-
     connection.query(
-      "select * from parttime_srilanka.job_seeker where seeker_id = ?",
+      "SELECT * FROM parttime_srilanka.job_seeker WHERE seeker_id = ?",
       [req.body.seeker_id],
       (err, data) => {
-        if (err) return res.json(err);
+        if (err) {
+          fs.unlink(path.join("uploads", req.file.filename), () => {});
+          return res.status(500).json(err);
+        }
+
         if (data.length <= 0) {
+          fs.unlink(path.join("uploads", req.file.filename), (unlinkErr) => {
+            if (unlinkErr) console.error("File deletion failed:", unlinkErr);
+            else console.log("File deleted due to no user found");
+          });
+
           return res.status(404).json({ error: "No user found" });
         }
+
+        const values = [req.file.filename, req.body.seeker_id];
+
+        connection.query(updateQuery, values, (err, data) => {
+          if (err) return res.status(500).json(err);
+          return res.json({ message: "Profile picture updated successfully" });
+        });
       }
     );
-
-    connection.query(updateQuery, values, (err, data) => {
-      if (err) return res.json(err);
-      return res.json("Profile picture updated successfully");
-    });
   });
 };
 
