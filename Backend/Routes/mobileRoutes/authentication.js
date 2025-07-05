@@ -6,7 +6,7 @@ const {
   jobSeekerLoginController,
 } = require("../../Functions/Mobile/authentication");
 
-const upload = require("../../middleware/file_middleware");
+const { upload } = require("../../middleware/file_middleware");
 // const multer = require("multer");
 // const upload = multer({ dest: "uploads/" });
 
