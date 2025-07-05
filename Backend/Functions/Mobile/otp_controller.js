@@ -1,14 +1,24 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
-// const connection = require("../../Services/connection");
+const connection = require("../../Services/connection");
 
 // Promisify the MySQL connection.query
 // const query = util.promisify(connection.query).bind(connection);
+
+const util = require("util");
+const query = util.promisify(connection.query).bind(connection);
 
 //Send Verification Code Email
 const sendEmailVerificationCode = async (req, res) => {
   const email = req.body.email;
   const verificationCode = generate4DigitOtp();
+
+  console.log("Email:", email);
+  console.log("Verification Code:", verificationCode);
+  console.log("Environment Variables:", {
+    EMAIL_HOST: process.env.EMAIL_HOST,
+    PASSWORD: process.env.PASSWORD,
+  });
 
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -65,7 +75,46 @@ const sendEmailVerificationCode = async (req, res) => {
   }
 };
 
-// Verify OTP
+// // Verify OTP
+// const otpVerifications = async (req, res) => {
+//   try {
+//     const { email, otp } = req.body;
+
+//     if (!email || !otp) {
+//       return res.status(400).json({ message: "Email and OTP are required" });
+//     }
+
+//     const query = "SELECT * FROM parttime_srilanka.otp WHERE email = ? AND otp = ? ORDER BY exp_date DESC LIMIT 1";
+//     const values = [email, otp];
+
+//     const dataexists = connection.query(query,values);
+
+//     if (!dataexists || dataexists.length < 0) {
+//       return res.status(400).json({ message: "Invalid OTP" });
+//     }
+
+//     const record = dataexists[0];
+//     console.log(
+//       "Record found for OTP verification:",
+//       record
+//     )
+//     const now = new Date();
+
+//     if (new Date(record.exp_date) < now) {
+//       return res.status(400).json({ message: "OTP expired" });
+//     }
+
+//     // OTP is valid
+//     return res.status(200).json({ message: "OTP verified successfully" });
+//   } catch (error) {
+//     console.error("Server error during OTP verification:", error);
+//     return res.status(500).json({
+//       message: "Server error",
+//       error: error.message,
+//     });
+//   }
+// };
+
 const otpVerifications = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -74,23 +123,24 @@ const otpVerifications = async (req, res) => {
       return res.status(400).json({ message: "Email and OTP are required" });
     }
 
-    const dataexists = connection.query(`SELECT * FROM parttime_srilanka.otp 
-WHERE email = ? AND otp = ? 
-ORDER BY exp_date DESC 
-LIMIT 1`);
+    const dataexists = await query(
+      "SELECT * FROM parttime_srilanka.otp WHERE email = ? AND otp = ? ORDER BY exp_date DESC LIMIT 1",
+      [email, otp]
+    );
 
-    if (!dataexists || dataexists.length < 0) {
+    if (!dataexists || dataexists.length === 0) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
     const record = dataexists[0];
+    console.log("Record found for OTP verification:", record);
+
     const now = new Date();
 
-    if (new Date(record.expires_at) < now) {
+    if (new Date(record.exp_date) < now) {
       return res.status(400).json({ message: "OTP expired" });
     }
 
-    // OTP is valid
     return res.status(200).json({ message: "OTP verified successfully" });
   } catch (error) {
     console.error("Server error during OTP verification:", error);
