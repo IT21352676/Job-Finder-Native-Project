@@ -129,15 +129,6 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
             <Feather name="package" size={24} color="white" />
             <Text style={styles.menuText}>PRODUCTS</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.8}
-          >
-            <Feather name="credit-card" size={24} color="white" />
-            <Text style={styles.menuText}>MY WALLET</Text>
-          </TouchableOpacity>
-
           
           <TouchableOpacity
             style={styles.menuItem}
