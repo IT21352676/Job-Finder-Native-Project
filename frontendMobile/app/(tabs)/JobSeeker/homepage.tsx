@@ -14,8 +14,18 @@ import {
   Platform,
 } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
+import { Link } from 'expo-router';
 
-const HomeDashboard = () => {
+interface NavigationProp {
+  navigate: (screen: string) => void;
+  goBack: () => void;
+}
+
+interface HomeDashboardProps {
+  navigation: NavigationProp;
+}
+
+const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
   const [activeNav, setActiveNav] = useState('Home');
   const [chatVisible, setChatVisible] = useState(false);
   const [messages, setMessages] = useState([
@@ -24,11 +34,24 @@ const HomeDashboard = () => {
   const [inputText, setInputText] = useState('');
 
   const navigate = (section: string) => {
-    Alert.alert('Navigation', `Navigating to ${section.toUpperCase()} section`);
+    if (section === 'chat') {
+      // Navigate to ChatScreen
+      navigation.navigate('ChatScreen');
+    } else {
+      Alert.alert('Navigation', `Navigating to ${section.toUpperCase()} section`);
+    }
   };
 
   const handleNavPress = (navItem: string) => {
     setActiveNav(navItem);
+    // You can add navigation logic here for bottom nav items too
+    if (navItem === 'Jobs') {
+      // navigation.navigate('JobsScreen');
+    } else if (navItem === 'Wallet') {
+      // navigation.navigate('WalletScreen');
+    } else if (navItem === 'Profile') {
+      // navigation.navigate('ProfileScreen');
+    }
   };
 
   const sendMessage = () => {
@@ -39,25 +62,16 @@ const HomeDashboard = () => {
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, sender: 'bot', text: 'Thanks for your message! I’ll assist you shortly.' },
+        { id: Date.now() + 1, sender: 'bot', text: 'Thanks for your message! I will assist you shortly.' },
       ]);
     }, 800);
   };
 
-  const menuItems = [
-    { id: 'jobs', icon: 'briefcase', text: 'JOBS' },
-    { id: 'customers', icon: 'users', text: 'CUSTOMERS' },
-    { id: 'products', icon: 'package', text: 'PRODUCTS' },
-    { id: 'wallet', icon: 'credit-card', text: 'MY WALLET' },
-    { id: 'chat', icon: 'message-circle', text: 'CHAT WITH US' },
-    { id: 'profile', icon: 'user', text: 'MY PROFILE' },
-  ];
-
   const navItems = [
-    { id: 'Home', icon: 'home', text: 'Home' },
-    { id: 'Jobs', icon: 'briefcase', text: 'Jobs' },
-    { id: 'Wallet', icon: 'credit-card', text: 'Wallet' },
-    { id: 'Profile', icon: 'user', text: 'Profile' },
+    { id: 'Home', icon: 'home' as const, text: 'Home' },
+    { id: 'Jobs', icon: 'briefcase' as const, text: 'Jobs' },
+    { id: 'Wallet', icon: 'credit-card' as const, text: 'Wallet' },
+    { id: 'Profile', icon: 'user' as const, text: 'Profile' },
   ];
 
   return (
@@ -76,7 +90,7 @@ const HomeDashboard = () => {
               <Feather name="bell" size={16} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="mail" size={16} color="white" />
+              <Feather name="message-circle" size={16} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notificationIcon}>
               <Feather name="settings" size={16} color="white" />
@@ -92,17 +106,56 @@ const HomeDashboard = () => {
 
         {/* Menu Grid */}
         <View style={styles.menuGrid}>
-          {menuItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.menuItem}
-              onPress={() => navigate(item.id)}
-              activeOpacity={0.8}
-            >
-              <Feather name={item.icon as any} size={24} color="white" />
-              <Text style={styles.menuText}>{item.text}</Text>
-            </TouchableOpacity>
-          ))}
+          <TouchableOpacity
+            style={styles.menuItem}
+            activeOpacity={0.8}
+          >
+            <Feather name="briefcase" size={24} color="white" />
+            <Text style={styles.menuText}>JOBS</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            activeOpacity={0.8}
+          >
+            <Feather name="users" size={24} color="white" />
+            <Text style={styles.menuText}>CUSTOMERS</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            activeOpacity={0.8}
+          >
+            <Feather name="package" size={24} color="white" />
+            <Text style={styles.menuText}>PRODUCTS</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            activeOpacity={0.8}
+          >
+            <Feather name="credit-card" size={24} color="white" />
+            <Text style={styles.menuText}>MY WALLET</Text>
+          </TouchableOpacity>
+
+          
+          <TouchableOpacity
+            style={styles.menuItem}
+            activeOpacity={0.8}
+          >
+            <Feather name="message-circle" size={24} color="white" />
+            <Link href="/(tabs)/JobSeeker/chatscreen"> <Text style={styles.menuText}>CHAT WITH US </Text>
+            </Link>
+          </TouchableOpacity>
+          
+         
+          <TouchableOpacity
+            style={styles.menuItem}
+            activeOpacity={0.8}
+          >
+            <Feather name="user" size={24} color="white" />
+            <Text style={styles.menuText}>MY PROFILE</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
 
@@ -112,7 +165,7 @@ const HomeDashboard = () => {
         onPress={() => setChatVisible(true)}
         activeOpacity={0.8}
       >
-        <Feather name="message-square" size={26} color="white" />
+        <Feather name="message-circle" size={26} color="white" />
       </TouchableOpacity>
 
       {/* Chat Modal */}
@@ -180,7 +233,7 @@ const HomeDashboard = () => {
             activeOpacity={0.7}
           >
             <Feather
-              name={item.icon as any}
+              name={item.icon}
               size={20}
               color={activeNav === item.id ? '#FF8C42' : '#999'}
               style={styles.navIcon}
@@ -312,10 +365,9 @@ const styles = StyleSheet.create({
     maxHeight: '80%',
     padding: 15,
   },
-
   chatText: {
-  fontSize: 14,
-  lineHeight: 20,
+    fontSize: 14,
+    lineHeight: 20,
   },
   chatHeader: {
     flexDirection: 'row',
