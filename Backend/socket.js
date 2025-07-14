@@ -2,21 +2,17 @@ const connectedUsers = [];
 
 const setupSocket = (io) => {
   io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
-
-    socket.on("register", (userId) => {
-      const existingUserIndex = connectedUsers.findIndex(
-        (user) => user.userId === userId
+    socket.on("register", (userId, userType) => {
+      const checkUserInPool = connectedUsers.findIndex(
+        (user) => user.userId === userId && user.userType === userType
       );
-
-      if (existingUserIndex !== -1) {
-        connectedUsers[existingUserIndex].socketId = socket.id;
+      if (checkUserInPool !== -1) {
+        connectedUsers[checkUserInPool].socketId = socket.id;
         console.log(`User ID ${userId} socket ID updated to ${socket.id}`);
       } else {
-        connectedUsers.push({ userId, socketId: socket.id });
+        connectedUsers.push({ userId, userType, socketId: socket.id });
         console.log(`User ID ${userId} registered with socket ID ${socket.id}`);
       }
-
       console.log("Current connectedUsers list:", connectedUsers);
     });
 

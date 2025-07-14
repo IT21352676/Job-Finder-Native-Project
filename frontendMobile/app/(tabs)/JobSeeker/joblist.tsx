@@ -16,42 +16,12 @@ import io from "socket.io-client";
 import Toast, { BaseToast } from "react-native-toast-message";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-const jobs = [
-  {
-    title: "Stock Keeper",
-    rate: "Rs.2200",
-    location: "Galle",
-    hours: "1",
-    date: "2024-06-01",
-    startTime: "8:10 AM",
-    totalHours: "15:00:00",
-    rating: 5.0,
-  },
-  {
-    title: "Waiter",
-    rate: "Rs.1800",
-    location: "Colombo",
-    hours: "2",
-    date: "2024-06-12",
-    startTime: "10:00 AM",
-    totalHours: "8:00:00",
-    rating: 4.2,
-  },
-  {
-    title: "Kitchen Helper",
-    rate: "Rs.1500",
-    location: "Kandy",
-    hours: "5",
-    date: "2024-07-01",
-    startTime: "6:00 AM",
-    totalHours: "12:00:00",
-    rating: 4.0,
-  },
-];
-
 const socket = io("http://localhost:8001");
 
 const JobsList = () => {
+  // TODO: Replace with dynamic userId (e.g., from auth context or AsyncStorage)
+  const userId = 2; // seeker ID
+
   const [activeNav, setActiveNav] = useState("Jobs");
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState("");
@@ -59,6 +29,27 @@ const JobsList = () => {
   const [messages, setMessages] = useState<
     { message: string; senderId?: number; roomId?: string }[]
   >([]);
+
+  const [jobs, setJobs] = useState([] as any);
+
+  socket.emit("register", userId, "Job Seeker");
+
+  const fetchJobList = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:8000/mobile/secured/job-poster/get-all-open"
+      );
+      const data = await res.json();
+      setJobs(data.data);
+    } catch (err) {
+      console.error("Failed to fetch joblist:", err);
+      setJobs({} as any);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobList();
+  }, []);
 
   const goBack = () => Alert.alert("Navigation", "Go back");
 
@@ -71,13 +62,6 @@ const JobsList = () => {
     setActiveNav(navItem);
     Alert.alert("Navigation", `Go to ${navItem}`);
   };
-
-  // TODO: Replace with dynamic userId (e.g., from auth context or AsyncStorage)
-  const userId = 2; // seeker ID
-
-  useEffect(() => {
-    listenChatAcceptNotification();
-  }, []);
 
   const toastConfig = {
     chat_accept_notification: ({ text1, text2, onPress, ...rest }: any) => (
@@ -107,8 +91,6 @@ const JobsList = () => {
   };
 
   const listenChatAcceptNotification = () => {
-    socket.emit("register", userId);
-
     socket.on("accept_notification", (data) => {
       console.log("Received Accepted Notification:", data);
       roomIdRef.current = data.roomId;
@@ -127,6 +109,10 @@ const JobsList = () => {
       }, 2000);
     });
   };
+  useEffect(() => {
+    listenChatAcceptNotification();
+  }, []);
+
   useEffect(() => {
     const handleMessage = (data: any) => {
       console.log("📩 Message received:", data);
@@ -149,6 +135,24 @@ const JobsList = () => {
     });
     //setMessage("");
   };
+
+  // const handleChatWithUS = async (posterId: string, jobId: string) => {
+  //   const fromUserId = userId; // Logged seeker Id
+  //   const toUserId = posterId;
+
+  //   try {
+  //     await fetch(
+  //       "http://localhost:8000/mobile/secured/notification/chat-request",
+  //       {
+  //         method: "POST",
+  //         body: JSON.stringify({ jobId, fromUserId, toUserId }),
+  //         headers: { "Content-Type": "application/json" },
+  //       }
+  //     );
+  //   } catch {
+  //     console.error("Error in chat with us");
+  //   }
+  // };
 
   const chatRoom = async (index: any) => {
     // const poster_id = 1;
@@ -238,35 +242,49 @@ const JobsList = () => {
 
       {/* Jobs List */}
       <ScrollView contentContainerStyle={styles.jobsContainer}>
-        {jobs.map((job, index) => (
+        {jobs.map((job: any, index: any) => (
           <View key={index} style={styles.jobCard}>
             <View style={styles.jobHeader}>
               <View>
-                <Text style={styles.jobTitle}>{job.title}</Text>
+                <Text style={styles.title}>{job.title}</Text>
                 <Text style={styles.badge}>New Posting</Text>
               </View>
-              <Text style={styles.rate}>{job.rate}</Text>
+              <Text style={styles.rate}>{job.status.toUpperCase()}</Text>
             </View>
 
             <View style={styles.rowGroup}>
-              <JobDetail label="Hourly Rate" value={job.rate} />
+              <JobDetail label="Description" value={job.description} />
               <JobDetail label="Location" value={job.location} />
-              <JobDetail label="Work Hours" value={job.hours} />
+              <JobDetail label="Work Hours" value={job.work_hours} />
             </View>
 
             <View style={styles.rowGroup}>
-              <JobDetail label="Job Date" value={job.date} />
-              <JobDetail label="Start Time" value={job.startTime} />
-              <JobDetail label="Total Hours" value={job.totalHours} />
+              <JobDetail label="Gender" value={job.gender.toUpperCase()} />
+              <JobDetail
+                label="Start Date"
+                value={new Date(
+                  job.start_date && job.start_date
+                ).toLocaleDateString()}
+              />
+              <JobDetail
+                label="Job Date"
+                value={new Date(
+                  job.start_date && job.job_date
+                ).toLocaleDateString()}
+              />
+            </View>
+            <View style={styles.rowGroup}>
+              <JobDetail label="Openings" value={job.amount_of_seekers} />
             </View>
 
             <View style={styles.jobFooter}>
               <Text style={styles.rating}>
-                {renderStars(job.rating)} ({job.rating.toFixed(1)})
+                {job.rating && renderStars(job.rating)}
+                {job.rating ? job.rating.toFixed(1) : "No ratings"}
               </Text>
 
               <TouchableOpacity
-                onPress={() => chatRoom(index)}
+                onPress={() => chatRoom(job.poster_id)}
                 style={styles.chatBtn}
               >
                 <Text style={styles.chatText}>Chat With Us</Text>

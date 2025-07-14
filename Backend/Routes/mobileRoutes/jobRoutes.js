@@ -6,6 +6,7 @@ const {
   editJobPost,
   getAllJobsByUserId,
   postANewJob,
+  getAllOpenJobs,
 } = require("../../Functions/Mobile/job_contoller");
 
 //DESC: POST JOB ROUTE
@@ -19,5 +20,7 @@ router.delete("/job-poster/delete/:job_id", verifyToken, deleteJob);
 
 //DESC: GET ALL JOBS BY USER
 router.get("/job-poster/get/:poster_id", verifyToken, getAllJobsByUserId);
+
+router.get("/job-poster/get-all-open", getAllOpenJobs);
 
 module.exports = router;

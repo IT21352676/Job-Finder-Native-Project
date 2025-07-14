@@ -131,7 +131,7 @@ const NotificationScreen = () => {
       const res = await fetch(
         `http://localhost:8000/mobile/secured/notification/chat-request/${userId}`
       );
-      console.log(res.body);
+
       const data = await res.json();
       setNotifications(data);
     } catch (err) {
@@ -170,12 +170,9 @@ const NotificationScreen = () => {
         Chat request from user #{item.from_user_id}
       </Text>
       {item.status === "pending" ? (
-        <TouchableOpacity
-          style={styles.acceptButton}
-          // onPress={() => handleAccept(item.id)}
-        >
-          <Text style={styles.buttonText}>Accept</Text>
-        </TouchableOpacity>
+        // onPress={() => handleAccept(item.id)}
+
+        <Text style={styles.buttonText}>Pending</Text>
       ) : (
         <Text style={styles.acceptedText}>Accepted</Text>
       )}

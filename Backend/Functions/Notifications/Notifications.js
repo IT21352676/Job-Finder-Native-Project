@@ -3,7 +3,9 @@ const { getConnectedUsers } = require("../../socket");
 
 const chatRequest = async (req, res, io) => {
   const { jobId, fromUserId, toUserId } = req.body;
+  console.log(jobId, fromUserId, toUserId);
   const connectedUsers = getConnectedUsers();
+  console.log(connectedUsers);
 
   const existingUserIndex = connectedUsers.findIndex(
     (user) => user.userId === toUserId
