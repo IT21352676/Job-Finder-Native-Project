@@ -16,9 +16,9 @@ import io from "socket.io-client";
 import Toast, { BaseToast } from "react-native-toast-message";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import ChatScreen from "./chatscreen";
+import { Link } from "expo-router";
 
 const socket = io("http://localhost:8001");
-
 
 const JobsList = () => {
   // TODO: Replace with dynamic userId (e.g., from auth context or AsyncStorage)
@@ -232,7 +232,9 @@ const JobsList = () => {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <TouchableOpacity style={styles.backBtn}>
-            <Link href="/(tabs)/JobSeeker/homepage"><Feather name="arrow-left" size={20} color="white" /></Link>
+            <Link href="/(tabs)/JobSeeker/homepage">
+              <Feather name="arrow-left" size={20} color="white" />
+            </Link>
           </TouchableOpacity>
           <View>
             <Text style={styles.headerTitle}>Jobs</Text>
