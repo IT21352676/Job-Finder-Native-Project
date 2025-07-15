@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SeekerLoginScreen from "./app/(tabs)/authentication/loginseeker";
 import PosterLoginScreen from "./app/(tabs)/authentication/loginposter";
 import HomeScreen from "./app/screens/homescreen";
+import Toast from "react-native-toast-message";
 
 // Define your navigation stack parameter list
 type RootStackParamList = {
@@ -18,12 +19,13 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginPoster">
-        <Stack.Screen name="LoginPoster" component={PosterLoginScreen} />
-      </Stack.Navigator>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="LoginPoster">
+          <Stack.Screen name="LoginPoster" component={PosterLoginScreen} />
+        </Stack.Navigator>
 
-      {/* <Stack.Navigator
+        {/* <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
           headerStyle: {
@@ -51,6 +53,8 @@ export default function App() {
           options={{ headerTitle: "Login as Job Poster" }}
         />
       </Stack.Navigator> */}
-    </NavigationContainer>
+      </NavigationContainer>
+      <Toast />
+    </>
   );
 }

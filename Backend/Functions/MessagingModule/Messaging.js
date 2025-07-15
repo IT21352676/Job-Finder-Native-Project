@@ -1,25 +1,25 @@
-const { getIO } = require("../../socket");
+// const { getIO } = require("../../socket");
 
-function messaging(io) {
-  io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
+// function messaging(io) {
+//   io.on("connection", (socket) => {
+//     console.log("User connected:", socket.id);
 
-    socket.on("joinRoom", ({ roomId }) => {
-      socket.join(roomId);
-    });
+//     socket.on("joinRoom", ({ roomId }) => {
+//       socket.join(roomId);
+//     });
 
-    socket.on("sendMessage", ({ roomId, message, sender }) => {
-      io.to(roomId).emit("receiveMessage", {
-        message,
-        sender,
-        timestamp: new Date(),
-      });
-    });
+//     socket.on("sendMessage", ({ roomId, message, sender }) => {
+//       io.to(roomId).emit("receiveMessage", {
+//         message,
+//         sender,
+//         timestamp: new Date(),
+//       });
+//     });
 
-    socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
-    });
-  });
-}
+//     socket.on("disconnect", () => {
+//       console.log("User disconnected:", socket.id);
+//     });
+//   });
+// }
 
-module.exports = { messaging };
+// module.exports = { messaging };
