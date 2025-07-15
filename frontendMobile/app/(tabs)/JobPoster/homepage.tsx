@@ -21,18 +21,28 @@ interface NavigationProp {
   goBack: () => void;
 }
 
-interface HomeDashboardProps {
+interface JobPosterDashboardProps {
   navigation: NavigationProp;
 }
 
-const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
+const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({ navigation }) => {
   const [activeNav, setActiveNav] = useState('Home');
   const [chatVisible, setChatVisible] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'bot', text: 'Welcome to Jobs! How can I help you?' },
+    { id: 1, sender: 'bot', text: 'Welcome to Job Poster Dashboard! How can I help you manage your job postings?' },
   ]);
   const [inputText, setInputText] = useState('');
 
+  const handleNavPress = (navItem: string) => {
+    setActiveNav(navItem);
+    if (navItem === 'Jobs') {
+      navigation.navigate('JobsScreen');
+    } else if (navItem === 'Wallet') {
+      // navigation.navigate('WalletScreen');
+    } else if (navItem === 'Profile') {
+      navigation.navigate('ProfileScreen');
+    }
+  };
 
   const sendMessage = () => {
     if (!inputText.trim()) return;
@@ -42,11 +52,17 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, sender: 'bot', text: 'Thanks for your message! I will assist you shortly.' },
+        { id: Date.now() + 1, sender: 'bot', text: 'Thanks for your message! I will assist you with your job posting needs shortly.' },
       ]);
     }, 800);
   };
 
+  const navItems = [
+    { id: 'Home', icon: 'home' as const, text: 'Home' },
+    { id: 'Jobs', icon: 'briefcase' as const, text: 'Jobs' },
+    { id: 'Wallet', icon: 'credit-card' as const, text: 'Wallet' },
+    { id: 'Profile', icon: 'user' as const, text: 'Profile' },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,7 +72,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.greetingContainer}>
-            <Text style={styles.greeting}>Hello Ramel</Text>
+            <Text style={styles.greeting}>Hello Employer</Text>
             <Text style={styles.userName}>Good Afternoon</Text>
           </View>
           <View style={styles.notificationIcons}>
@@ -69,10 +85,16 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Balance Card */}
-        <View style={styles.balanceCard}>
-          <Text style={styles.balanceLabel}>Total Balance</Text>
-          <Text style={styles.balanceAmount}>Rs. 25,000</Text>
+        {/* Stats Cards */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>Active Jobs</Text>
+            <Text style={styles.statAmount}>12</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>Total Applications</Text>
+            <Text style={styles.statAmount}>89</Text>
+          </View>
         </View>
 
         {/* Menu Grid */}
@@ -81,47 +103,43 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
             style={styles.menuItem}
             activeOpacity={0.8}
           >
-            <Feather name="briefcase" size={24} color="white" />
-              <Link href="/(tabs)/JobSeeker/joblist"> <Text style={styles.menuText}>JOBS</Text></Link>
-          
+            <Feather name="plus-circle" size={24} color="white" />
+            <Link href="/(tabs)/JobPoster/jobpost">
+              <Text style={styles.menuText}>POST NEW JOB</Text>
+            </Link>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.menuItem}
             activeOpacity={0.8}
-
           >
-            <Feather name="file-text" size={24} color="white" />
-            <Link href="/(tabs)/JobSeeker/appliedjobs"><Text style={styles.menuText}>APPLIED JOBS</Text></Link>
+            <Feather name="eye" size={24} color="white" />
+            <Link href="/(tabs)/JobPoster/viewjobs">
+              <Text style={styles.menuText}>VIEW JOBS</Text>
+            </Link>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.menuItem}
             activeOpacity={0.8}
-
           >
-            <Feather name="check-circle" size={24} color="white" />
-            <Text style={styles.menuText}><Link href="/(tabs)/JobSeeker/completedjobs">COMPLETED JOBS</Link></Text>
+            <Feather name="credit-card" size={24} color="white" />
+            <Link href="/(tabs)/JobPoster/createbankaccount">
+              <Text style={styles.menuText}>BANK ACCOUNT</Text>
+            </Link>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.menuItem}
             activeOpacity={0.8}
-
           >
             <Feather name="message-circle" size={24} color="white" />
-            <Link href="/(tabs)/JobSeeker/chatscreen"><Text style={styles.menuText}>CHAT WITH US</Text></Link>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.8}
-
-          >
-            <Feather name="user" size={24} color="white" />
-            <Link href="/(tabs)/JobSeeker/profile"><Text style={styles.menuText}>MY PROFILE</Text></Link>
+            <Link href="/(tabs)/JobPoster/viewapplicant">
+              <Text style={styles.menuText}>VIEW APPLICANTS</Text>
+            </Link>
           </TouchableOpacity>
         </View>
+
       </ScrollView>
 
       {/* Floating AI Bot */}
@@ -187,12 +205,12 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      
+
     </SafeAreaView>
   );
 };
 
-export default HomeDashboard;
+export default JobPosterDashboard;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F5F5' },
@@ -221,21 +239,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 10,
   },
-  balanceCard: {
-    backgroundColor: '#4CAF50',
+  statsContainer: {
+    flexDirection: 'row',
     marginHorizontal: 20,
     marginTop: 20,
-    padding: 25,
-    borderRadius: 20,
-    alignItems: 'center',
-    elevation: 8,
+    gap: 10,
   },
-  balanceLabel: {
-    fontSize: 16,
+  statCard: {
+    backgroundColor: '#4CAF50',
+    flex: 1,
+    padding: 20,
+    borderRadius: 15,
+    alignItems: 'center',
+    elevation: 4,
+  },
+  statLabel: {
+    fontSize: 14,
     color: 'rgba(255, 255, 255, 0.9)',
     marginBottom: 5,
   },
-  balanceAmount: { fontSize: 32, fontWeight: 'bold', color: 'white' },
+  statAmount: { fontSize: 24, fontWeight: 'bold', color: 'white' },
   menuGrid: {
     padding: 20,
     flexDirection: 'row',
@@ -251,15 +274,44 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    marginRight: '3%',
+    marginRight: '5%',
     elevation: 4,
   },
   menuText: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '600',
     color: 'white',
     textAlign: 'center',
     marginTop: 8,
+  },
+  quickActionsContainer: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 15,
+  },
+  quickActions: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  quickActionButton: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 12,
+    flex: 1,
+    elevation: 2,
+  },
+  quickActionText: {
+    marginLeft: 10,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#333',
   },
   bottomNav: {
     position: 'absolute',
