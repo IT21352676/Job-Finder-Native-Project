@@ -57,8 +57,6 @@ const JobsList = () => {
   const applyJob = (jobTitle: string) =>
     Alert.alert("Apply", `Applied for ${jobTitle}`);
 
-<<<<<<< HEAD
-=======
   const handleNavPress = (navItem: string) => {
     setActiveNav(navItem);
     Alert.alert("Navigation", `Go to ${navItem}`);
@@ -198,23 +196,14 @@ const JobsList = () => {
     }
   };
 
->>>>>>> 2cd5f5fe7460ade851f06495dbe61812e04ade89
   const renderStars = (rating: number) => {
     const full = Math.floor(rating);
     const stars = Array.from({ length: 5 }, (_, i) => (i < full ? "★" : "☆"));
     return stars.join(" ");
   };
 
-<<<<<<< HEAD
-=======
-  const navItems = [
-    { id: "Home", icon: "home", text: "Home" },
-    { id: "Jobs", icon: "briefcase", text: "Jobs" },
-    { id: "Wallet", icon: "credit-card", text: "Wallet" },
-    { id: "Profile", icon: "user", text: "Profile" },
-  ];
 
->>>>>>> 2cd5f5fe7460ade851f06495dbe61812e04ade89
+
   return (
     <SafeAreaView style={styles.container}>
       <Modal
@@ -308,37 +297,6 @@ const JobsList = () => {
           </View>
         ))}
       </ScrollView>
-<<<<<<< HEAD
-=======
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        {navItems.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.navItem}
-            onPress={() => handleNavPress(item.id)}
-            activeOpacity={0.7}
-          >
-            <Feather
-              name={item.icon as any}
-              size={20}
-              color={activeNav === item.id ? "#FF8C42" : "#999"}
-              style={styles.navIcon}
-            />
-            <Text
-              style={[
-                styles.navText,
-                activeNav === item.id && styles.navTextActive,
-              ]}
-            >
-              {item.text}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <Toast config={toastConfig} />
->>>>>>> 2cd5f5fe7460ade851f06495dbe61812e04ade89
     </SafeAreaView>
   );
 };
