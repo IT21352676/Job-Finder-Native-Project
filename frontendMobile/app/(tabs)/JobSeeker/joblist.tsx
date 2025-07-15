@@ -15,6 +15,7 @@ import Feather from "@expo/vector-icons/Feather";
 import io from "socket.io-client";
 import Toast, { BaseToast } from "react-native-toast-message";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import ChatScreen from "./chatscreen";
 
 const socket = io("http://localhost:8001");
 
@@ -25,10 +26,7 @@ const JobsList = () => {
   const [activeNav, setActiveNav] = useState("Jobs");
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState("");
-  const roomIdRef = useRef(null);
-  const [messages, setMessages] = useState<
-    { message: string; senderId?: number; roomId?: string }[]
-  >([]);
+  const roomIdRef = useRef("");
 
   const [jobs, setJobs] = useState([] as any);
 
@@ -64,7 +62,7 @@ const JobsList = () => {
   };
 
   const toastConfig = {
-    chat_accept_notification: ({ text1, text2, onPress, ...rest }: any) => (
+    chat_accepted_notification: ({ text1, text2, onPress, ...rest }: any) => (
       <BaseToast
         {...rest}
         contentContainerStyle={{ paddingRight: 12 }}
@@ -88,16 +86,61 @@ const JobsList = () => {
         )}
       />
     ),
+    request_sent_notification: ({ text1, text2, ...rest }: any) => (
+      <BaseToast
+        {...rest}
+        contentContainerStyle={{
+          paddingRight: 12,
+          backgroundColor: "#d4edda",
+          borderRightColor: "#28a745",
+          borderRightWidth: 6,
+          borderRadius: 8,
+        }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#155724",
+        }}
+        text2Style={{
+          fontSize: 14,
+          color: "#155724",
+        }}
+        text1={text1}
+        text2={text2}
+      />
+    ),
+    request_failed_notification: ({ text1, text2, ...rest }: any) => (
+      <BaseToast
+        {...rest}
+        contentContainerStyle={{
+          paddingRight: 12,
+          backgroundColor: "#edd4d4ff",
+          borderRightColor: "#a72828ff",
+          borderRightWidth: 6,
+          borderRadius: 8,
+        }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#571515ff",
+        }}
+        text2Style={{
+          fontSize: 14,
+          color: "#571515ff",
+        }}
+        text1={text1}
+        text2={text2}
+      />
+    ),
   };
 
   const listenChatAcceptNotification = () => {
-    socket.on("accept_notification", (data) => {
+    socket.on("accepted_notification", (data) => {
       console.log("Received Accepted Notification:", data);
       roomIdRef.current = data.roomId;
-      console.log(data.roomId);
       setTimeout(() => {
         Toast.show({
-          type: "chat_accept_notification",
+          type: "chat_accepted_notification",
           text1: "Chat request accepted",
           text2: "Tap to open the chat room",
           onPress: () => {
@@ -113,62 +156,45 @@ const JobsList = () => {
     listenChatAcceptNotification();
   }, []);
 
-  useEffect(() => {
-    const handleMessage = (data: any) => {
-      console.log("📩 Message received:", data);
-      console.log("Sender:", socket.id);
-      setMessages((prev) => [...prev, data]);
-    };
-
-    socket.on("receive_message", handleMessage);
-
-    return () => {
-      socket.off("receive_message", handleMessage);
-    };
-  }, []);
-
-  const handleSendMessage = () => {
-    socket.emit("send_message", {
-      roomId: roomIdRef.current,
-      senderId: userId,
-      message: message,
-    });
-    //setMessage("");
-  };
-
-  // const handleChatWithUS = async (posterId: string, jobId: string) => {
-  //   const fromUserId = userId; // Logged seeker Id
-  //   const toUserId = posterId;
-
-  //   try {
-  //     await fetch(
-  //       "http://localhost:8000/mobile/secured/notification/chat-request",
-  //       {
-  //         method: "POST",
-  //         body: JSON.stringify({ jobId, fromUserId, toUserId }),
-  //         headers: { "Content-Type": "application/json" },
-  //       }
-  //     );
-  //   } catch {
-  //     console.error("Error in chat with us");
-  //   }
-  // };
-
-  const chatRoom = async (index: any) => {
-    // const poster_id = 1;
-    // console.log("clicked");
-    const jobId = index;
+  const handleChatWithUS = async (posterId: string, jobId: string) => {
     const fromUserId = userId;
-    const toUserId = index;
-    const response = await fetch(
-      "http://localhost:8000/mobile/secured/notification/chat-request",
-      {
-        method: "POST",
-        body: JSON.stringify({ jobId, fromUserId, toUserId }),
-        headers: { "Content-Type": "application/json" },
+    const toUserId = posterId;
+
+    try {
+      const res = await fetch(
+        "http://localhost:8000/mobile/secured/notification/chat-request",
+        {
+          method: "POST",
+          body: JSON.stringify({ jobId, fromUserId, toUserId }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.status === 404) {
+        Toast.show({
+          type: "request_failed_notification",
+          text1: "Request sending failed",
+          text2: data.error,
+
+          position: "top",
+        });
+        return console.log(data.error);
       }
-    );
+      console.log(data.message);
+      Toast.show({
+        type: "request_sent_notification",
+        text1: "Chat request sent succesfully",
+        text2: "Wait for poster acceptance",
+
+        position: "top",
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
+
   const renderStars = (rating: number) => {
     const full = Math.floor(rating);
     const stars = Array.from({ length: 5 }, (_, i) => (i < full ? "★" : "☆"));
@@ -191,35 +217,12 @@ const JobsList = () => {
         onRequestClose={() => setModalVisible(false)} // Android back button
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.noMessages}>
-              {messages.map((i) => i.message)}
-            </Text>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Icon name="arrow-downward" size={24} color="orange" />
-              <Text>Close</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Message Input */}
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Write your message"
-              placeholderTextColor="#999"
-              value={message}
-              onChangeText={setMessage}
-              multiline
-            />
-            <TouchableOpacity
-              style={styles.sendButton}
-              onPress={() => {
-                handleSendMessage();
-              }}
-            >
-              <Icon name="send" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
+          <ChatScreen
+            socket={socket}
+            roomId={roomIdRef.current}
+            userId={userId}
+            setModalVisible={setModalVisible}
+          />
         </View>
       </Modal>
       <StatusBar barStyle="light-content" backgroundColor="#FF8C42" />
@@ -284,7 +287,7 @@ const JobsList = () => {
               </Text>
 
               <TouchableOpacity
-                onPress={() => chatRoom(job.poster_id)}
+                onPress={() => handleChatWithUS(job.poster_id, job.job_id)}
                 style={styles.chatBtn}
               >
                 <Text style={styles.chatText}>Chat With Us</Text>
@@ -381,7 +384,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   modalOverlay: {
-    flex: 1,
+    display: "contents",
     backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",

@@ -21,11 +21,12 @@ const setupSocket = (io) => {
       console.log(`Socket ${socket.id} joined room_${roomId}`);
     });
 
-    socket.on("send_message", ({ roomId, message, sender }) => {
-      console.log("Receive", message, roomId, socket.id);
+    socket.on("send_message", ({ roomId, message, senderId, userType }) => {
       io.to(roomId).emit("receive_message", {
         message,
-        sender: socket.id,
+        senderSocketId: socket.id,
+        senderId,
+        userType,
         timestamp: new Date(),
       });
     });

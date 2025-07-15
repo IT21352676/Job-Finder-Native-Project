@@ -14,6 +14,7 @@ import io from "socket.io-client";
 import Toast, { BaseToast } from "react-native-toast-message";
 import { TextInput } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import ChatRequestScreen from "./chatrequest";
 
 type Notification = {
   id: number;

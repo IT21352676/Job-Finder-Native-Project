@@ -15,7 +15,7 @@ module.exports = (io) => {
 
   router.get("/notification/chat-request/:to_user_id", getChatRequests);
 
-  router.post("/notification/:id/accept", (req, res) => {
+  router.post("/notification/:notification_id/accept", (req, res) => {
     acceptChatRequest(req, res, io);
   });
 
