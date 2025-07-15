@@ -19,6 +19,7 @@ import ChatScreen from "./chatscreen";
 
 const socket = io("http://localhost:8001");
 
+
 const JobsList = () => {
   // TODO: Replace with dynamic userId (e.g., from auth context or AsyncStorage)
   const userId = 2; // seeker ID
@@ -230,17 +231,14 @@ const JobsList = () => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity style={styles.backBtn} onPress={goBack}>
-            <Feather name="arrow-left" size={20} color="white" />
+          <TouchableOpacity style={styles.backBtn}>
+            <Link href="/(tabs)/JobSeeker/homepage"><Feather name="arrow-left" size={20} color="white" /></Link>
           </TouchableOpacity>
           <View>
             <Text style={styles.headerTitle}>Jobs</Text>
             <Text style={styles.headerSubtitle}>Find your next job</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={newPosting} style={styles.newPostBtn}>
-          <Text style={styles.newPostText}>New Posting</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Jobs List */}

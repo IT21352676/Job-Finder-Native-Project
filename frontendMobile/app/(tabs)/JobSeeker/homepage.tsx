@@ -33,24 +33,16 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
   ]);
   const [inputText, setInputText] = useState('');
 
-  const navigate = (section: string) => {
-    if (section === 'chat') {
-      // Navigate to ChatScreen
-      navigation.navigate('ChatScreen');
-    } else {
-      Alert.alert('Navigation', `Navigating to ${section.toUpperCase()} section`);
-    }
-  };
 
   const handleNavPress = (navItem: string) => {
     setActiveNav(navItem);
     // You can add navigation logic here for bottom nav items too
     if (navItem === 'Jobs') {
-      // navigation.navigate('JobsScreen');
+      navigation.navigate('JobsScreen');
     } else if (navItem === 'Wallet') {
       // navigation.navigate('WalletScreen');
     } else if (navItem === 'Profile') {
-      // navigation.navigate('ProfileScreen');
+      navigation.navigate('ProfileScreen');
     }
   };
 
@@ -90,9 +82,6 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
               <Feather name="bell" size={16} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="message-circle" size={16} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.notificationIcon}>
               <Feather name="settings" size={16} color="white" />
             </TouchableOpacity>
           </View>
@@ -111,41 +100,44 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
             activeOpacity={0.8}
           >
             <Feather name="briefcase" size={24} color="white" />
-            <Text style={styles.menuText}>JOBS</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.8}
-          >
-            <Feather name="users" size={24} color="white" />
-            <Text style={styles.menuText}>CUSTOMERS</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.8}
-          >
-            <Feather name="package" size={24} color="white" />
-            <Text style={styles.menuText}>PRODUCTS</Text>
-          </TouchableOpacity>
+              <Link href="/(tabs)/JobSeeker/joblist"> <Text style={styles.menuText}>JOBS</Text></Link>
           
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.menuItem}
             activeOpacity={0.8}
+
+          >
+            <Feather name="file-text" size={24} color="white" />
+            <Link href="/(tabs)/JobSeeker/appliedjobs"><Text style={styles.menuText}>APPLIED JOBS</Text></Link>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            activeOpacity={0.8}
+
+          >
+            <Feather name="check-circle" size={24} color="white" />
+            <Text style={styles.menuText}><Link href="/(tabs)/JobSeeker/completedjobs">COMPLETED JOBS</Link></Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            activeOpacity={0.8}
+
           >
             <Feather name="message-circle" size={24} color="white" />
-            <Link href="/(tabs)/JobSeeker/chatscreen"> <Text style={styles.menuText}>CHAT WITH US </Text>
-            </Link>
+            <Link href="/(tabs)/JobSeeker/chatscreen"><Text style={styles.menuText}>CHAT WITH US</Text></Link>
           </TouchableOpacity>
           
-         
           <TouchableOpacity
             style={styles.menuItem}
             activeOpacity={0.8}
+
           >
             <Feather name="user" size={24} color="white" />
-            <Text style={styles.menuText}>MY PROFILE</Text>
+            <Link href="/(tabs)/JobSeeker/profile"><Text style={styles.menuText}>MY PROFILE</Text></Link>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -292,7 +284,7 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   menuItem: {
     backgroundColor: '#FF8C42',
@@ -303,6 +295,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+    marginRight: '3%',
     elevation: 4,
   },
   menuText: {
