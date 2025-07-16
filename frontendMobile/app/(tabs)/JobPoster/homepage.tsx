@@ -98,6 +98,8 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
         console.log("Token:", token);
 
         setUserData(user);
+      } else {
+        console.log("Auth data not found");
       }
     } catch (error) {
       console.error("Error retrieving login data:", error);
