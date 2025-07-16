@@ -36,6 +36,7 @@ app.use(
   "/mobile/secured",
   require("./Routes/mobileRoutes/job_applicationRoutes")
 );
+app.use("/mobile/secured", require("./Routes/mobileRoutes/bankRoutes"));
 
 app.listen(process.env.PORT, () => {
   console.log("Server started in port: ", process.env.PORT);
