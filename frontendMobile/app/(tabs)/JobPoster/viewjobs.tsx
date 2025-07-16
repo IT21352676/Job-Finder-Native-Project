@@ -142,7 +142,7 @@ const ViewPostedJobsScreen = () => {
               {jobs.length} job{jobs.length !== 1 ? 's' : ''} posted
             </Text>
           </View>
-          <Link href="/(tabs)/JobPoster/homepage" asChild>
+          <Link href="/(tabs)/JobPoster/homepage">
             <TouchableOpacity style={styles.homeButton}>
               <Feather name="home" size={24} color="white" />
             </TouchableOpacity>

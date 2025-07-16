@@ -166,7 +166,7 @@ const ViewApplicantsScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTopRow}>
-          <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+          <TouchableOpacity style={styles.backButton}>
             <Feather name="arrow-left" size={24} color="white" />
           </TouchableOpacity>
           <View style={styles.headerTitleContainer}>

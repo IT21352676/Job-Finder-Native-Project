@@ -124,7 +124,7 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({ navigation }) =
             activeOpacity={0.8}
           >
             <Feather name="credit-card" size={24} color="white" />
-            <Link href="/(tabs)/JobPoster/createbankaccount">
+            <Link href="/(tabs)/JobPoster/showbankaccounts">
               <Text style={styles.menuText}>BANK ACCOUNT</Text>
             </Link>
           </TouchableOpacity>
