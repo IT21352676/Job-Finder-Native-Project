@@ -14,6 +14,8 @@ import {
   Platform,
   ImageBackground,
 } from "react-native";
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL = "http://localhost:8000/mobile/auth/job-poster-signin";
 
@@ -48,8 +50,15 @@ export default function PosterLoginScreen() {
         return;
       }
 
+      // Save token and user info to AsyncStorage
+      await AsyncStorage.setItem("token", data.token);
+      await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
       Alert.alert("Login Successful", `Welcome ${data.user.firstname}!`);
       alert(`Login Successful, Welcome ${data.user.firstname}!`);
+      router.push({
+        pathname: "/JobPoster/homepage",
+      });
     } catch (error: any) {
       console.error("Login error:", error);
       Alert.alert("Error", "Something went wrong. Please try again.");

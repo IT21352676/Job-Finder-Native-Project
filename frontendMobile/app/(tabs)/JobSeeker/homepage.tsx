@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,9 +12,10 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
-import { Link } from 'expo-router';
+} from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+import { Link } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface NavigationProp {
   navigate: (screen: string) => void;
@@ -26,27 +27,62 @@ interface HomeDashboardProps {
 }
 
 const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
-  const [activeNav, setActiveNav] = useState('Home');
+  const [activeNav, setActiveNav] = useState("Home");
   const [chatVisible, setChatVisible] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'bot', text: 'Welcome to Jobs! How can I help you?' },
+    { id: 1, sender: "bot", text: "Welcome to Jobs! How can I help you?" },
   ]);
-  const [inputText, setInputText] = useState('');
-
+  const [inputText, setInputText] = useState("");
 
   const sendMessage = () => {
     if (!inputText.trim()) return;
-    setMessages((prev) => [...prev, { id: Date.now(), sender: 'user', text: inputText }]);
-    setInputText('');
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now(), sender: "user", text: inputText },
+    ]);
+    setInputText("");
     // Simulated bot reply
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, sender: 'bot', text: 'Thanks for your message! I will assist you shortly.' },
+        {
+          id: Date.now() + 1,
+          sender: "bot",
+          text: "Thanks for your message! I will assist you shortly.",
+        },
       ]);
     }, 800);
   };
 
+  interface User {
+    id: number;
+    firstname: string;
+    lastname: string;
+    email: string;
+    role: string;
+  }
+  const [userData, setUserData] = useState<User>();
+
+  const fetchStoredData = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userJson = await AsyncStorage.getItem("user");
+
+      if (token && userJson) {
+        const user = JSON.parse(userJson);
+        console.log("Auto-login user:", user.firstname);
+        console.log("Token:", token);
+
+        setUserData(user);
+      }
+    } catch (error) {
+      console.error("Error retrieving login data:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStoredData();
+  }, [fetchStoredData]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,8 +92,8 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.greetingContainer}>
-            <Text style={styles.greeting}>Hello Ramel</Text>
-            <Text style={styles.userName}>Good Afternoon</Text>
+            <Text style={styles.greeting}>Hello {userData?.firstname}!</Text>
+            <Text style={styles.userName}>Good day to you</Text>
           </View>
           <View style={styles.notificationIcons}>
             <TouchableOpacity style={styles.notificationIcon}>
@@ -77,49 +113,40 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
 
         {/* Menu Grid */}
         <View style={styles.menuGrid}>
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.8}
-          >
+          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="briefcase" size={24} color="white" />
-              <Link href="/(tabs)/JobSeeker/joblist"> <Text style={styles.menuText}>JOBS</Text></Link>
-          
+            <Link href="/(tabs)/JobSeeker/joblist">
+              {" "}
+              <Text style={styles.menuText}>JOBS</Text>
+            </Link>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.8}
-
-          >
+          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="file-text" size={24} color="white" />
-            <Link href="/(tabs)/JobSeeker/appliedjobs"><Text style={styles.menuText}>APPLIED JOBS</Text></Link>
+            <Link href="/(tabs)/JobSeeker/appliedjobs">
+              <Text style={styles.menuText}>APPLIED JOBS</Text>
+            </Link>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.8}
-
-          >
+          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="check-circle" size={24} color="white" />
-            <Text style={styles.menuText}><Link href="/(tabs)/JobSeeker/completedjobs">COMPLETED JOBS</Link></Text>
+            <Text style={styles.menuText}>
+              <Link href="/(tabs)/JobSeeker/completedjobs">COMPLETED JOBS</Link>
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.8}
-
-          >
+          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="message-circle" size={24} color="white" />
-            <Link href="/(tabs)/JobSeeker/chatscreen"><Text style={styles.menuText}>CHAT WITH US</Text></Link>
+            <Link href="/(tabs)/JobSeeker/chatscreen">
+              <Text style={styles.menuText}>CHAT WITH US</Text>
+            </Link>
           </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.8}
 
-          >
+          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="user" size={24} color="white" />
-            <Link href="/(tabs)/JobSeeker/profile"><Text style={styles.menuText}>MY PROFILE</Text></Link>
+            <Link href="/(tabs)/JobSeeker/profile">
+              <Text style={styles.menuText}>MY PROFILE</Text>
+            </Link>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -155,13 +182,13 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
                   key={msg.id}
                   style={[
                     styles.chatBubble,
-                    msg.sender === 'bot' ? styles.botBubble : styles.userBubble,
+                    msg.sender === "bot" ? styles.botBubble : styles.userBubble,
                   ]}
                 >
                   <Text
                     style={[
                       styles.chatText,
-                      msg.sender === 'bot' ? styles.botText : styles.userText,
+                      msg.sender === "bot" ? styles.botText : styles.userText,
                     ]}
                   >
                     {msg.text}
@@ -171,7 +198,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
             </ScrollView>
 
             <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              behavior={Platform.OS === "ios" ? "padding" : undefined}
               style={styles.inputRow}
             >
               <TextInput
@@ -187,7 +214,6 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      
     </SafeAreaView>
   );
 };
@@ -195,114 +221,114 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
 export default HomeDashboard;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F5F5' },
+  container: { flex: 1, backgroundColor: "#F5F5F5" },
   scrollContent: { paddingBottom: 90 },
   header: {
-    backgroundColor: '#FF8C42',
+    backgroundColor: "#FF8C42",
     paddingTop: 40,
     paddingBottom: 20,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   greetingContainer: { flex: 1 },
-  greeting: { fontSize: 18, fontWeight: '600', color: 'white' },
-  userName: { fontSize: 16, color: 'rgba(255, 255, 255, 0.9)', marginTop: 2 },
-  notificationIcons: { flexDirection: 'row', gap: 10 },
+  greeting: { fontSize: 18, fontWeight: "600", color: "white" },
+  userName: { fontSize: 16, color: "rgba(255, 255, 255, 0.9)", marginTop: 2 },
+  notificationIcons: { flexDirection: "row", gap: 10 },
   notificationIcon: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
     marginLeft: 10,
   },
   balanceCard: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     marginHorizontal: 20,
     marginTop: 20,
     padding: 25,
     borderRadius: 20,
-    alignItems: 'center',
+    alignItems: "center",
     elevation: 8,
   },
   balanceLabel: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: "rgba(255, 255, 255, 0.9)",
     marginBottom: 5,
   },
-  balanceAmount: { fontSize: 32, fontWeight: 'bold', color: 'white' },
+  balanceAmount: { fontSize: 32, fontWeight: "bold", color: "white" },
   menuGrid: {
     padding: 20,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
   },
   menuItem: {
-    backgroundColor: '#FF8C42',
+    backgroundColor: "#FF8C42",
     borderRadius: 15,
     padding: 20,
-    width: '30%',
+    width: "30%",
     aspectRatio: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
-    marginRight: '3%',
+    marginRight: "3%",
     elevation: 4,
   },
   menuText: {
     fontSize: 10,
-    fontWeight: '600',
-    color: 'white',
-    textAlign: 'center',
+    fontWeight: "600",
+    color: "white",
+    textAlign: "center",
     marginTop: 8,
   },
   bottomNav: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: "#E0E0E0",
     paddingVertical: 15,
     paddingHorizontal: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
     elevation: 10,
   },
-  navItem: { alignItems: 'center', flex: 1 },
+  navItem: { alignItems: "center", flex: 1 },
   navIcon: { marginBottom: 4 },
-  navText: { fontSize: 10, fontWeight: '500', color: '#999' },
-  navTextActive: { color: '#FF8C42' },
+  navText: { fontSize: 10, fontWeight: "500", color: "#999" },
+  navTextActive: { color: "#FF8C42" },
   floatingBot: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 85,
     right: 24,
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     width: 56,
     height: 56,
     borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     elevation: 12,
     zIndex: 10,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "flex-end",
   },
   chatModal: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '80%',
+    maxHeight: "80%",
     padding: 15,
   },
   chatText: {
@@ -310,44 +336,44 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   chatHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
-  chatTitle: { fontSize: 16, fontWeight: 'bold' },
+  chatTitle: { fontSize: 16, fontWeight: "bold" },
   chatMessages: { maxHeight: 250 },
   chatBubble: {
     padding: 10,
     borderRadius: 12,
     marginVertical: 4,
-    maxWidth: '80%',
+    maxWidth: "80%",
   },
   botBubble: {
-    backgroundColor: '#E8F5E9',
-    alignSelf: 'flex-start',
+    backgroundColor: "#E8F5E9",
+    alignSelf: "flex-start",
   },
   userBubble: {
-    backgroundColor: '#FFECB3',
-    alignSelf: 'flex-end',
+    backgroundColor: "#FFECB3",
+    alignSelf: "flex-end",
   },
-  botText: { color: '#333' },
-  userText: { color: '#333' },
+  botText: { color: "#333" },
+  userText: { color: "#333" },
   inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 10,
     paddingBottom: 10,
   },
   textInput: {
     flex: 1,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: "#f2f2f2",
     borderRadius: 20,
     paddingHorizontal: 15,
     paddingVertical: 8,
     marginRight: 10,
   },
   sendButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     padding: 10,
     borderRadius: 20,
   },

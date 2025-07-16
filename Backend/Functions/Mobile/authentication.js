@@ -256,7 +256,7 @@ const jobSeekerLoginController = async (req, res) => {
       }
 
       const token = jwt.sign(
-        { id: user.id, email: user.email, role: user.role },
+        { id: user.seeker_id, email: user.email, role: "job_seeker" },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
@@ -265,11 +265,11 @@ const jobSeekerLoginController = async (req, res) => {
         message: "Login successful",
         token,
         user: {
-          id: user.id,
+          id: user.seeker_id,
           firstname: user.firstname,
           lastname: user.lastname,
           email: user.email,
-          role: user.role,
+          role: "job_seeker",
         },
       });
     });
@@ -311,7 +311,7 @@ const jobPosterLoginController = async (req, res) => {
       }
 
       const token = jwt.sign(
-        { id: user.id, email: user.email, role: user.role },
+        { id: user.poster_id, email: user.emailAddress, role: "job_poster" },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
@@ -320,11 +320,11 @@ const jobPosterLoginController = async (req, res) => {
         message: "Login successful",
         token,
         user: {
-          id: user.id,
+          id: user.poster_id,
           firstname: user.firstname,
           lastname: user.lastname,
-          email: user.email,
-          role: user.role,
+          email: user.emailAddress,
+          role: "job_poster",
         },
       });
     });
