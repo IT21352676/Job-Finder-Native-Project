@@ -202,12 +202,7 @@ const JobsList = () => {
     return stars.join(" ");
   };
 
-  const navItems = [
-    { id: "Home", icon: "home", text: "Home" },
-    { id: "Jobs", icon: "briefcase", text: "Jobs" },
-    { id: "Wallet", icon: "credit-card", text: "Wallet" },
-    { id: "Profile", icon: "user", text: "Profile" },
-  ];
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -302,34 +297,6 @@ const JobsList = () => {
           </View>
         ))}
       </ScrollView>
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        {navItems.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.navItem}
-            onPress={() => handleNavPress(item.id)}
-            activeOpacity={0.7}
-          >
-            <Feather
-              name={item.icon as any}
-              size={20}
-              color={activeNav === item.id ? "#FF8C42" : "#999"}
-              style={styles.navIcon}
-            />
-            <Text
-              style={[
-                styles.navText,
-                activeNav === item.id && styles.navTextActive,
-              ]}
-            >
-              {item.text}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };

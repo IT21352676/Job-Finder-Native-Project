@@ -1,3 +1,5 @@
+import { Link } from 'expo-router';
+import Feather from '@expo/vector-icons/Feather';
 import React, { useState } from 'react';
 import {
   View,
@@ -24,7 +26,14 @@ const PostJobScreen = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>Post the Jobs</Text>
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>Post the Jobs</Text>
+            <Link href="/(tabs)/JobPoster/homepage" asChild>
+              <TouchableOpacity style={styles.homeButton}>
+                <Feather name="home" size={24} color="white" />
+              </TouchableOpacity>
+            </Link>
+          </View>
         </View>
 
         <View style={styles.formContainer}>
@@ -90,7 +99,7 @@ const PostJobScreen = () => {
           />
 
           <TouchableOpacity style={styles.postButton}>
-            <Text style={styles.postButtonText}>Post</Text>
+            <Link href="/(tabs)/JobPoster/payment"><Text style={styles.postButtonText}>Post</Text></Link>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -111,10 +120,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   headerTitle: {
     color: 'white',
     fontSize: 20,
     fontWeight: '600',
+    flex: 1,
+  },
+  homeButton: {
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    marginLeft: 12,
   },
   formContainer: {
     padding: 20,

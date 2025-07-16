@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
@@ -82,7 +83,7 @@ const CreateBankAccount = () => {
           </View>
 
           <TouchableOpacity style={styles.createButton} onPress={handleCreate}>
-            <Text style={styles.createButtonText}>Create</Text>
+            <Link href='/(tabs)/JobPoster/showbankaccounts'><Text style={styles.createButtonText}>Create</Text></Link>
           </TouchableOpacity>
         </View>
       </View>

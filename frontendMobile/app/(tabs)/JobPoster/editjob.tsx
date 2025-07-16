@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -96,7 +97,7 @@ const EditJobScreen = () => {
           />
 
           <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save Changes</Text>
+           <Link href="/(tabs)/JobPoster/viewjobs"><Text style={styles.saveButtonText}>Save Changes</Text></Link> 
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -95,23 +95,6 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
     }
   };
 
-  const handleNavPress = (navItem: string) => {
-    setActiveNav(navItem);
-    if (navItem === 'Home') {
-      navigation.navigate('HomeDashboard');
-    } else if (navItem === 'Jobs') {
-      navigation.navigate('JobsScreen');
-    } else if (navItem === 'Profile') {
-      navigation.navigate('ProfileScreen');
-    }
-  };
-
-  const navItems = [
-    { id: 'Home', icon: 'home' as const, text: 'Home' },
-    { id: 'Jobs', icon: 'briefcase' as const, text: 'Jobs' },
-    { id: 'Wallet', icon: 'credit-card' as const, text: 'Wallet' },
-    { id: 'Profile', icon: 'user' as const, text: 'Profile' },
-  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -253,31 +236,6 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
         </View>
       </Modal>
 
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        {navItems.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.navItem}
-            onPress={() => handleNavPress(item.id)}
-            activeOpacity={0.7}
-          >
-            <Feather
-              name={item.icon}
-              size={20}
-              color={activeNav === item.id ? '#FF8C42' : '#999'}
-            />
-            <Text
-              style={[
-                styles.navText,
-                activeNav === item.id && styles.navTextActive,
-              ]}
-            >
-              {item.text}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
     </SafeAreaView>
   );
 };
