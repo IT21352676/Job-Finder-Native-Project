@@ -20,7 +20,7 @@ async function generateUserRecommendations(req, res) {
           },
           {
             role: "user",
-            content: `### Job Description:\n${jobContent}\n\n### User List (Skills & Behaviors):\n${userList}\n\n### Instructions:\n- Recommend only the most relevant users.\n- For each user, provide a short explanation of the match.\n- Format the response as a markdown list:\n\n**Example Output Format:**\n\n- **User Name 1**: Explanation why they are suitable.\n- **User Name 2**: Explanation why they are suitable.\n\nBegin.`,
+            content: `### Job Poster message : \n${jobContent}\n\n### User List (Skills & Behaviors):\n${userList}\n\n### Instructions:\n- Recommend only the most relevant users.\n- For each user, provide a short explanation of the match.\n- Format the response as a markdown list:\n\n**Example Output Format:**\n\n- **User Name 1**: Explanation why they are suitable.\n- **User Name 2**: Explanation why they are suitable.\n\nBegin.`,
           },
         ],
       },

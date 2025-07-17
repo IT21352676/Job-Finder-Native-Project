@@ -35,6 +35,8 @@ const notificationRoutes = require("./Routes/mobileRoutes/notificationRoutes")(
 );
 app.use("/mobile/secured", notificationRoutes);
 
+app.use("/mobile/secured", require("./Routes/mobileRoutes/aiRoutes"));
+
 app.listen(process.env.PORT, () => {
   console.log("Server started in port: ", process.env.PORT);
 });
