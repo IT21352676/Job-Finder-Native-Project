@@ -3,17 +3,21 @@ const connectedUsers = [];
 const setupSocket = (io) => {
   io.on("connection", (socket) => {
     socket.on("register", (userId, userType) => {
-      const checkUserInPool = connectedUsers.findIndex(
-        (user) => user.userId === userId && user.userType === userType
-      );
-      if (checkUserInPool !== -1) {
-        connectedUsers[checkUserInPool].socketId = socket.id;
-        console.log(`User ID ${userId} socket ID updated to ${socket.id}`);
-      } else {
-        connectedUsers.push({ userId, userType, socketId: socket.id });
-        console.log(`User ID ${userId} registered with socket ID ${socket.id}`);
+      if (userId != null) {
+        const checkUserInPool = connectedUsers.findIndex(
+          (user) => user.userId === userId && user.userType === userType
+        );
+        if (checkUserInPool !== -1) {
+          connectedUsers[checkUserInPool].socketId = socket.id;
+          console.log(`User ID ${userId} socket ID updated to ${socket.id}`);
+        } else {
+          connectedUsers.push({ userId, userType, socketId: socket.id });
+          console.log(
+            `User ID ${userId} registered with socket ID ${socket.id}`
+          );
+        }
+        console.log("Current connectedUsers list:", connectedUsers);
       }
-      console.log("Current connectedUsers list:", connectedUsers);
     });
 
     socket.on("join_room", (roomId) => {

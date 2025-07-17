@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Modal,
   View,
@@ -17,12 +17,44 @@ import Toast, { BaseToast } from "react-native-toast-message";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import ChatScreen from "./chatscreen";
 import { Link } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const socket = io("http://localhost:8001");
 
+interface User {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  role: string;
+}
 const JobsList = () => {
+  const [userData, setUserData] = useState<User>();
+
+  const fetchStoredData = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userJson = await AsyncStorage.getItem("user");
+
+      if (token && userJson) {
+        const user = JSON.parse(userJson);
+        console.log("Auto-login user:", user.firstname);
+        console.log("Token:", token);
+
+        setUserData(user);
+      }
+    } catch (error) {
+      console.error("Error retrieving login data:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStoredData();
+  }, [fetchStoredData]);
+
   // TODO: Replace with dynamic userId (e.g., from auth context or AsyncStorage)
-  const userId = 2; // seeker ID
+
+  const userId = userData?.id; // seeker ID
 
   const [activeNav, setActiveNav] = useState("Jobs");
   const [modalVisible, setModalVisible] = useState(false);
@@ -202,8 +234,6 @@ const JobsList = () => {
     return stars.join(" ");
   };
 
-
-
   return (
     <SafeAreaView style={styles.container}>
       <Modal
@@ -297,6 +327,8 @@ const JobsList = () => {
           </View>
         ))}
       </ScrollView>
+
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };

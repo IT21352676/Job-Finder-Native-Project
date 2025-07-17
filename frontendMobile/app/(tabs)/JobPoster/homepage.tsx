@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,10 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import { Link, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ChatRequestScreen from "./chatrequest";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:8001");
 
 interface NavigationProp {
   navigate: (screen: string) => void;
@@ -85,7 +89,8 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
     email: string;
     role: string;
   }
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<User>({} as User);
+  socket.emit("register", userData.id, "Job Poster");
 
   const fetchStoredData = useCallback(async () => {
     try {
@@ -238,6 +243,9 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
           </View>
         </View>
       </Modal>
+      <View style={styles.toastWrapper}>
+        <ChatRequestScreen user={userData} socket={socket} />
+      </View>
     </SafeAreaView>
   );
 };
@@ -245,6 +253,15 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
 export default JobPosterDashboard;
 
 const styles = StyleSheet.create({
+  toastWrapper: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 9999,
+    elevation: 9999,
+    pointerEvents: "box-none",
+  },
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   scrollContent: { paddingBottom: 90 },
   header: {

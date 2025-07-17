@@ -16,11 +16,20 @@ import { TextInput } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import ChatScreen from "./chatscreen";
 
-const socket = io("http://localhost:8001");
-
-const ChatRequestScreen = () => {
+interface User {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  role: string;
+}
+interface Props {
+  user: User;
+  socket: any;
+}
+const ChatRequestScreen = ({ user, socket }: Props) => {
   // TODO: Replace with dynamic userId (e.g., from auth context or AsyncStorage)
-  const userId = 1; // poster ID
+  const userId = user?.id;
 
   const roomIdRef = useRef("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -53,9 +62,7 @@ const ChatRequestScreen = () => {
   };
 
   const listenChatNotification = () => {
-    socket.emit("register", userId, "Job Poster");
-
-    socket.on("new_chat_notification", (data) => {
+    socket.on("new_chat_notification", (data: any) => {
       console.log("Received Notification:", data);
       setTimeout(() => {
         Toast.show({

@@ -64,7 +64,7 @@ const ChatScreen = ({ socket, roomId, userId, setModalVisible }: Props) => {
           style={styles.backButton}
           onPress={() => setModalVisible(false)}
         >
-          <Link href="/(tabs)/JobSeeker/homepage">
+          <Link href="/(tabs)/JobSeeker/joblist">
             <Icon name="arrow-back" size={24} color="white" />
           </Link>
         </TouchableOpacity>

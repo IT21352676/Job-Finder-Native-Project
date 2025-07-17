@@ -27,28 +27,31 @@ interface HomeDashboardProps {
 }
 
 const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
+  const [userData, setUserData] = useState<User>();
+
   const [activeNav, setActiveNav] = useState("Home");
   const [chatVisible, setChatVisible] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, sender: "bot", text: "Welcome to Jobs! How can I help you?" },
   ]);
-  const [inputText, setInputText] = useState("");
 
-  const sendMessage = () => {
-    if (!inputText.trim()) return;
+  const [chatAI, setChatAI] = useState("");
+
+  const sendMessage = (content: any) => {
+    if (!chatAI.trim()) return;
     setMessages((prev) => [
       ...prev,
-      { id: Date.now(), sender: "user", text: inputText },
+      { id: Date.now(), sender: "user", text: chatAI },
     ]);
-    setInputText("");
-    // Simulated bot reply
+    setChatAI("");
+
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
           sender: "bot",
-          text: "Thanks for your message! I will assist you shortly.",
+          text: content,
         },
       ]);
     }, 800);
@@ -61,7 +64,6 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
     email: string;
     role: string;
   }
-  const [userData, setUserData] = useState<User>();
 
   const fetchStoredData = useCallback(async () => {
     try {
@@ -83,6 +85,27 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
   useEffect(() => {
     fetchStoredData();
   }, [fetchStoredData]);
+
+  const handleAIChat = async () => {
+    const userId = userData?.id;
+    try {
+      const res = await fetch(
+        `http://localhost:8000/mobile/secured/job-recommandation?content=${chatAI}`,
+        {
+          method: "POST",
+          body: JSON.stringify({ userId }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const data = await res.json();
+
+      sendMessage(data.content);
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -135,12 +158,12 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
+          {/* <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="message-circle" size={24} color="white" />
             <Link href="/(tabs)/JobSeeker/chatscreen">
               <Text style={styles.menuText}>CHAT WITH US</Text>
             </Link>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="user" size={24} color="white" />
@@ -202,12 +225,15 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
               style={styles.inputRow}
             >
               <TextInput
-                value={inputText}
-                onChangeText={setInputText}
+                value={chatAI}
+                onChangeText={setChatAI}
                 placeholder="Type your message"
                 style={styles.textInput}
               />
-              <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+              <TouchableOpacity
+                onPress={() => handleAIChat()}
+                style={styles.sendButton}
+              >
                 <Feather name="send" size={20} color="white" />
               </TouchableOpacity>
             </KeyboardAvoidingView>
