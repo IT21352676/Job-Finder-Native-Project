@@ -1,10 +1,10 @@
 const bcrypt = require("bcrypt");
 const connection = require("../../Services/connection");
 const jwt = require("jsonwebtoken");
-// const util = require("util");
+const util = require("util");
 
 // Promisify the MySQL connection.query
-// const query = util.promisify(connection.query).bind(connection);
+const query = util.promisify(connection.query).bind(connection);
 
 // DESC: REGISTER AS A JOB SEEKER
 const jobSeekerRegistrationController = async (req, res) => {
@@ -62,7 +62,7 @@ const jobSeekerRegistrationController = async (req, res) => {
 
   try {
     // Check for existing user
-    const existingUsers = connection.query(
+    const existingUsers = await query(
       `SELECT * FROM parttime_srilanka.job_seeker WHERE nic = ? OR email = ?`,
       [nic, email]
     );
@@ -299,15 +299,18 @@ const jobPosterLoginController = async (req, res) => {
       }
 
       if (results.length === 0) {
-        return res.status(401).json({ error: "Invalid email or password" });
+        return res
+          .status(401)
+          .json({ error: "Invalid email or password", results });
       }
 
       const user = results[0];
 
       // Compare hashed passwords
       const passwordMatch = await bcrypt.compare(password, user.password);
+      console.log(password, user.password);
       if (!passwordMatch) {
-        return res.status(401).json({ error: "Invalid email or password" });
+        return res.status(401).json({ error: "Password mismatched" });
       }
 
       const token = jwt.sign(
