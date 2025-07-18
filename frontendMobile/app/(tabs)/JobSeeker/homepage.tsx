@@ -166,6 +166,13 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
           </TouchableOpacity> */}
 
           <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
+            <Feather name="credit-card" size={24} color="white" />
+            <Link href="/(tabs)/JobSeeker/showbankaccounts">
+              <Text style={styles.menuText}>BANK ACCOUNT</Text>
+            </Link>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="user" size={24} color="white" />
             <Link href="/(tabs)/JobSeeker/profile">
               <Text style={styles.menuText}>MY PROFILE</Text>

@@ -193,7 +193,7 @@ const getAllJobsByUserId = async (req, res) => {
     }
 
     if (!data || data.length == 0) {
-      return res.status.json({ message: "No jobs available" });
+      return res.status(401).json({ message: "No jobs available" });
     }
 
     return res.status(200).json({ data });

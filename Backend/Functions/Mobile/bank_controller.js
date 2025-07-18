@@ -2,8 +2,7 @@ const connection = require("../../Services/connection");
 
 // DESC: CREATE BANK ACCOUNT
 const createBankAcc = async (req, res) => {
-  const { seeker_id } = req.params;
-  const { bank, holder, bankACC, branch } = req.body;
+  const { seeker_id, bank, holder, bankACC, branch } = req.body;
 
   const query = `
     INSERT INTO parttime_srilanka.seeker_wallet 
