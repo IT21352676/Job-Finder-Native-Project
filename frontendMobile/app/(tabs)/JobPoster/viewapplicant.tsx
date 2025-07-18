@@ -238,7 +238,7 @@ const ViewApplicantsScreen = () => {
                     onPress={() => handleApprove(applicant.id)}
                   >
                     <Feather name="check" size={16} color="white" />
-                    <Text style={styles.buttonText}>Approve</Text>
+                    <Link href='/(tabs)/JobPoster/payment'><Text style={styles.buttonText}>Approve</Text></Link>
                   </TouchableOpacity>
 
                   <TouchableOpacity 

@@ -99,7 +99,7 @@ const PostJobScreen = () => {
           />
 
           <TouchableOpacity style={styles.postButton}>
-            <Link href="/(tabs)/JobPoster/payment"><Text style={styles.postButtonText}>Post</Text></Link>
+            <Text style={styles.postButtonText}>Post</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
