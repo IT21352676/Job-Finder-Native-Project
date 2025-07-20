@@ -2,17 +2,17 @@ const connection = require("../../Services/connection");
 
 // DESC: APPLY FOR A JOB
 const applyForAJob = async (req, res) => {
-  const { job_id, seeker_id } = req.body;
+  const { job_id, seeker_id, poster_id } = req.body;
 
-  if (!job_id || !seeker_id) {
+  if (!job_id || !seeker_id || !poster_id) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   const query = `
-    INSERT INTO parttime_srilanka.job_application (job_id, seeker_id, status, apply_date)
-    VALUES (?, ?, 'Pending', NOW())
+    INSERT INTO parttime_srilanka.job_application (job_id, seeker_id, status, apply_date, poster_id)
+    VALUES (?, ?, 'Pending', NOW(),?)
   `;
-  const values = [job_id, seeker_id];
+  const values = [job_id, seeker_id, poster_id];
 
   connection.query(query, values, (err) => {
     if (err) {
@@ -158,6 +158,28 @@ const viewJobSeekerData = async (req, res) => {
   });
 };
 
+// DESC: DISPLAY JOBS
+const displayApplications = async (req, res) => {
+  const { poster_id } = req.params.poster_id;
+
+  if (!poster_id) {
+    return res.status(400).json({ error: "Seeker is undefined" });
+  }
+
+  const query = `
+    SELECT * FROM parttime_srilanka.job_application
+    WHERE poster_id = ?
+  `;
+  const values = [poster_id];
+
+  connection.query(query, values, (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: `Something went wrong: ${err}` });
+    }
+    return res.status(200).json({ data });
+  });
+};
+
 module.exports = {
   applyForAJob,
   displayAcceptedJobs,
@@ -166,4 +188,5 @@ module.exports = {
   acceptJobRequest,
   rejectJobRequest,
   viewJobSeekerData,
+  displayApplications,
 };
