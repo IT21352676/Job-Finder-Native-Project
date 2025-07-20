@@ -62,19 +62,24 @@ const postANewJob = async (req, res) => {
 
 //DESC: EDIT EXISTING POST
 const editJobPost = async (req, res) => {
-  const findExistJob = `SELECT * FROM parttime_srilanka.job WHERE job_id = ?`;
-  const jobId = req.params;
+  const findExistJob = `SELECT * FROM parttime_srilanka.job WHERE job_id=?`;
+  const job_id = req.params.job_id;
+  console.log(job_id);
 
-  if (!jobId) {
+  if (!job_id) {
     return res.status(400).json({ error: "job_id is required" });
   }
 
-  connection.query(findExistJob, [jobId], (err, result) => {
+  connection.query(findExistJob, [job_id], (err, result) => {
     if (err) {
+      console.log("SQL ERROR", err);
       return res.status(500).json({ error: "Database error: " + err });
     }
 
+    console.log(result);
+
     if (!result || result.length === 0) {
+      console.log("JOb not found");
       return res.status(404).json({ error: "Job not found" });
     }
 
@@ -124,7 +129,7 @@ const editJobPost = async (req, res) => {
       hourly_title,
       location,
       requirements,
-      jobId,
+      job_id,
     ];
 
     connection.query(updateQuery, values, (error, data) => {
@@ -233,6 +238,29 @@ const searchAndFilterJob = async (req, res) => {
   });
 };
 
+//DESC: GET ALL JOBS BY JOB ID
+const getJobsById = async (req, res) => {
+  const getQuery = "SELECT * FROM parttime_srilanka.job WHERE job_id=?";
+
+  const { job_id } = req.params;
+
+  if (!job_id) {
+    return res.status(400).json({ error: "Job poster id required" });
+  }
+
+  connection.query(getQuery, [job_id], (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: "Server error: " + err.message });
+    }
+
+    if (!data || data.length == 0) {
+      return res.status(401).json({ message: "No jobs available" });
+    }
+
+    return res.status(200).json({ data });
+  });
+};
+
 module.exports = {
   postANewJob,
   editJobPost,
@@ -240,4 +268,5 @@ module.exports = {
   getAllJobsByUserId,
   getAllOpenJobs,
   searchAndFilterJob,
+  getJobsById,
 };
