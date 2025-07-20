@@ -61,7 +61,7 @@ const retrieveProfilePictureHandler = async (req, res) => {
   const selectQuery =
     "SELECT profile_picture FROM parttime_srilanka.job_poster WHERE poster_id = ?;";
 
-  const values = [req.body.poster_id];
+  const values = [req.params.poster_id];
   if (!req.body.poster_id) {
     return res.status(400).json({ error: "Poster ID is required" });
   }
@@ -141,8 +141,19 @@ const updatePersonalInfoHandler = async (req, res) => {
 
 const updatePersonalInfo = [authenticateToken, updatePersonalInfoHandler];
 
+const getDetailsById = async (req, res) => {
+  const query =
+    "SELECT * FROM parttime_srilanka.job_poster WHERE poster_id = ?;";
+
+  connection.query(query, [req.params.poster_id], (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+};
+
 module.exports = {
   uploadProfilePicture,
   retrieveProfilePicture,
   updatePersonalInfo,
+  getDetailsById,
 };
