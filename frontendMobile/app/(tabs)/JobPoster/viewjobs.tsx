@@ -147,6 +147,9 @@ const ViewPostedJobsScreen = () => {
       </View>
 
       <View style={styles.jobDetails}>
+        <Text style={styles.detailLabel}>Job ID:</Text>
+        <Text style={styles.detailValue}>{job.job_id}</Text>
+
         <Text style={styles.detailLabel}>Status:</Text>
         <Text style={styles.detailValue}>{job.status}</Text>
 

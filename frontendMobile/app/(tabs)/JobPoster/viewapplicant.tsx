@@ -16,6 +16,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const FETCH_APPLICATIONS_API_URL =
   "http://localhost:8000/mobile/secured/applications/job-poster/";
 
+const ACCEPT_APPLICATION_API_URL =
+  "http://localhost:8000/mobile/secured/application/accept-application/";
+
+const REJECT_APPLICATION_API_URL =
+  "http://localhost:8000/mobile/secured/application/reject-application/";
+
 interface Applicant {
   application_id: number;
   job_id: number;
@@ -27,57 +33,110 @@ interface Applicant {
 const ViewApplicantsScreen = () => {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
 
-  const handleApprove = (applicantId: number) => {
-    Alert.alert(
-      "Approve Applicant",
-      "Are you sure you want to approve this applicant?",
-      [
-        { text: "Cancel", style: "cancel" },
+  const handleApprove = async (applicantId: number, jobID: number) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const response = await fetch(
+        ACCEPT_APPLICATION_API_URL + `${applicantId}`,
         {
-          text: "Approve",
-          onPress: () => {
-            setApplicants((prev) =>
-              prev.map((app) =>
-                app.application_id === applicantId
-                  ? { ...app, status: "Accepted" }
-                  : app
-              )
-            );
-            Alert.alert("Success", "Applicant approved successfully");
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        },
-      ]
-    );
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch jobs");
+      }
+
+      const data = await response.json();
+
+      alert("Job Application Accepted");
+      Alert.alert("Success", "Job Application Accepted");
+      router.push({
+        pathname: "/authentication/otpemail",
+        params: { jobId: jobID },
+      });
+    } catch (error: any) {
+      console.error("Application error:", error);
+    }
+    // Alert.alert(
+    //   "Approve Applicant",
+    //   "Are you sure you want to approve this applicant?",
+    //   [
+    //     { text: "Cancel", style: "cancel" },
+    //     {
+    //       text: "Approve",
+    //       onPress: () => {
+    //         setApplicants((prev) =>
+    //           prev.map((app) =>
+    //             app.application_id === applicantId
+    //               ? { ...app, status: "Accepted" }
+    //               : app
+    //           )
+    //         );
+    //         Alert.alert("Success", "Applicant approved successfully");
+    //       },
+    //     },
+    //   ]
+    // );
   };
 
-  const handleDecline = (applicantId: number) => {
-    Alert.alert(
-      "Decline Applicant",
-      "Are you sure you want to decline this applicant?",
-      [
-        { text: "Cancel", style: "cancel" },
+  const handleDecline = async (applicantId: number) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const response = await fetch(
+        REJECT_APPLICATION_API_URL + `${applicantId}`,
         {
-          text: "Decline",
-          style: "destructive",
-          onPress: () => {
-            setApplicants((prev) =>
-              prev.map((app) =>
-                app.application_id === applicantId
-                  ? { ...app, status: "Rejected" }
-                  : app
-              )
-            );
-            Alert.alert("Success", "Applicant declined successfully");
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        },
-      ]
-    );
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch jobs");
+      }
+
+      const data = await response.json();
+
+      alert("Job Application Rejected");
+      Alert.alert("Success", "Job Application Rejected");
+    } catch (error: any) {
+      console.error("Application error:", error);
+    }
+
+    // Alert.alert(
+    //   "Decline Applicant",
+    //   "Are you sure you want to decline this applicant?",
+    //   [
+    //     { text: "Cancel", style: "cancel" },
+    //     {
+    //       text: "Decline",
+    //       style: "destructive",
+    //       onPress: () => {
+    //         setApplicants((prev) =>
+    //           prev.map((app) =>
+    //             app.application_id === applicantId
+    //               ? { ...app, status: "Rejected" }
+    //               : app
+    //           )
+    //         );
+    //         Alert.alert("Success", "Applicant declined successfully");
+    //       },
+    //     },
+    //   ]
+    // );
   };
 
   const handleViewResume = (applicant: Applicant) => {
     // Navigate to resume page with applicant data
     router.push({
-      pathname: "/(tabs)/JobPoster/viewapplicant",
+      pathname: "/(tabs)/JobPoster/viewresume",
       params: {
         applicantId: applicant.seeker_id,
         // applicantData: JSON.stringify(applicant),
@@ -227,24 +286,24 @@ const ViewApplicantsScreen = () => {
                     <Text style={styles.buttonText}>Call</Text>
                   </TouchableOpacity> */}
 
-                  <TouchableOpacity style={styles.resumeButton}>
+                  <TouchableOpacity
+                    style={styles.resumeButton}
+                    onPress={() => handleViewResume}
+                  >
                     <Feather name="eye" size={16} color="white" />
-                    <Link href="/(tabs)/JobPoster/viewresume">
-                      {" "}
-                      <Text style={styles.buttonText}>View Resume</Text>
-                    </Link>
+                    <Text style={styles.buttonText}>View Resume</Text>
                   </TouchableOpacity>
                 </View>
 
                 <View style={styles.decisionButtons}>
                   <TouchableOpacity
                     style={styles.approveButton}
-                    onPress={() => handleApprove(applicant.application_id)}
+                    onPress={() =>
+                      handleApprove(applicant.application_id, applicant.job_id)
+                    }
                   >
                     <Feather name="check" size={16} color="white" />
-                    <Link href="/(tabs)/JobPoster/payment">
-                      <Text style={styles.buttonText}>Approve</Text>
-                    </Link>
+                    <Text style={styles.buttonText}>Approve</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
