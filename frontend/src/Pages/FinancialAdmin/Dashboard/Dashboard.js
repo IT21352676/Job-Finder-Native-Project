@@ -74,6 +74,8 @@ function Dashboard() {
   const [revenueData, setRevenueData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [forecast, setForecast] = useState("");
+
   useEffect(() => {
     axios
       .get("http://localhost:8000/groupedincome")
@@ -100,6 +102,23 @@ function Dashboard() {
       });
   }, []);
 
+  async function getForecast() {
+    axios
+      .post("http://localhost:8000/mobile/secured/financial-forecast", {
+        incomeData,
+        revenueData,
+      })
+      .then((response) => {
+        setForecast(response.data.content);
+      })
+      .catch((error) => {
+        message.error("Error fetching revenue data");
+        console.error(error);
+      });
+  }
+
+  getForecast();
+
   if (loading || !incomeData || !revenueData) {
     return <Spin size="large" tip="Loading..." />;
   }
@@ -109,6 +128,8 @@ function Dashboard() {
       <Title level={2} style={{ marginBottom: "24px", color: "#1890ff" }}>
         Financial Admin Dashboard
       </Title>
+
+      <text>{forecast}</text>
       <div style={dashboardStyles.cardsContainer}>
         {[
           {
