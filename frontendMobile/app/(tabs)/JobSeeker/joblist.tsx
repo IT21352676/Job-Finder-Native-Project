@@ -87,9 +87,6 @@ const JobsList = () => {
 
   const newPosting = () => Alert.alert("Action", "Create new job posting");
 
-  const applyJob = (jobTitle: string) =>
-    Alert.alert("Apply", `Applied for ${jobTitle}`);
-
   const handleNavPress = (navItem: string) => {
     setActiveNav(navItem);
     Alert.alert("Navigation", `Go to ${navItem}`);
@@ -235,6 +232,25 @@ const JobsList = () => {
     return stars.join(" ");
   };
 
+  const handleJobApply = async (job_id: any, poster_id: any) => {
+    const seeker_id = userData?.id;
+    try {
+      const res = await fetch(
+        "http://localhost:8000/mobile/secured/application/post",
+        {
+          method: "POST",
+          body: JSON.stringify({ job_id, seeker_id, poster_id }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Modal
@@ -322,7 +338,7 @@ const JobsList = () => {
                 <Text style={styles.chatText}>Chat With Us</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => applyJob(job.title)}
+                onPress={() => handleJobApply(job.job_id, job.poster_id)}
                 style={styles.applyBtn}
               >
                 <Text style={styles.applyText}>Apply</Text>
