@@ -24,6 +24,6 @@ router.get("/job-poster/get/:poster_id", verifyToken, getAllJobsByUserId);
 
 router.get("/job-poster/get-all-open", getAllOpenJobs);
 
-router.get("/job-poster/get-job/:job_id", verifyToken, getJobsById);
+router.get("/job-poster/get-job/:job_id", getJobsById);
 
 module.exports = router;

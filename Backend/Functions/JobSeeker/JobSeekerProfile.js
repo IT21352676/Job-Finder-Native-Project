@@ -61,8 +61,8 @@ const retrieveProfilePictureHandler = async (req, res) => {
   const selectQuery =
     "SELECT profile_picture FROM parttime_srilanka.job_seeker WHERE seeker_id = ?;";
 
-  const values = [req.body.seeker_id];
-  if (!req.body.seeker_id) {
+  const values = [req.params.seeker_id];
+  if (!req.params.seeker_id) {
     return res.status(400).json({ error: "Seeker ID is required" });
   }
 
@@ -90,7 +90,7 @@ const retrieveProfilePicture = [
 
 const updatePersonalInfoHandler = async (req, res) => {
   const updateQuery =
-    "UPDATE parttime_srilanka.job_seeker SET email = ?, firstname = ?, lastname = ?, nic = ?, birthday = ?, gender = ?, telnumber = ?, addressLine = ?, city = ?, province = ?, password = ?, status = ?, activeStatus = ? WHERE seeker_id = ?;";
+    "UPDATE parttime_srilanka.job_seeker SET email = ?, firstname = ?, lastname = ?, nic = ?, birthday = ?, gender = ?, telnumber = ?, addressLine = ?, city = ?, province = ?, password = ?, status = ?, activeStatus = ?, skills = ? WHERE seeker_id = ?;";
 
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -108,8 +108,11 @@ const updatePersonalInfoHandler = async (req, res) => {
     hashedPassword,
     req.body.status,
     req.body.activeStatus,
+    req.body.skills,
     req.body.seeker_id,
   ];
+
+  console.log(values);
 
   if (
     !req.body.email ||
@@ -125,6 +128,7 @@ const updatePersonalInfoHandler = async (req, res) => {
     !req.body.password ||
     !req.body.status ||
     !req.body.activeStatus ||
+    !req.body.skills ||
     !req.body.seeker_id
   ) {
     return res.status(400).json({ error: "All fields are required" });
@@ -236,6 +240,21 @@ const addReviewHandler = async (req, res) => {
 };
 
 const addReview = [authenticateToken, addReviewHandler];
+
+const getUserDetails = (req, res) => {
+  connection.query(
+    "select * from parttime_srilanka.job_seeker where seeker_id = ?",
+    [req.params.seeker_id],
+    (err, data) => {
+      if (err) return res.json(err);
+      // if (data.length <= 0) {
+      //   return res.status(404).json({ error: "No user found" });
+      // }
+
+      return res.json(data);
+    }
+  );
+};
 module.exports = {
   updatePersonalInfo,
   addSkills,
@@ -243,4 +262,7 @@ module.exports = {
   addReview,
   uploadProfilePicture,
   retrieveProfilePicture,
+  getUserDetails,
+  updatePersonalInfoHandler,
+  uploadProfilePictureHandler,
 };

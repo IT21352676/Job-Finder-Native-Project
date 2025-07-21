@@ -4,6 +4,8 @@ const connection = require("../../Services/connection");
 const applyForAJob = async (req, res) => {
   const { job_id, seeker_id, poster_id } = req.body;
 
+  console.log(job_id, seeker_id, poster_id);
+
   if (!job_id || !seeker_id || !poster_id) {
     return res.status(400).json({ error: "All fields are required" });
   }

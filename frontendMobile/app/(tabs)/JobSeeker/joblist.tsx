@@ -18,6 +18,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import ChatScreen from "./chatscreen";
 import { Link } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import JobItem from "./jobitem";
 
 const socket = io("http://localhost:8001");
 
@@ -85,9 +86,6 @@ const JobsList = () => {
   const goBack = () => Alert.alert("Navigation", "Go back");
 
   const newPosting = () => Alert.alert("Action", "Create new job posting");
-
-  const applyJob = (jobTitle: string) =>
-    Alert.alert("Apply", `Applied for ${jobTitle}`);
 
   const handleNavPress = (navItem: string) => {
     setActiveNav(navItem);
@@ -234,6 +232,25 @@ const JobsList = () => {
     return stars.join(" ");
   };
 
+  const handleJobApply = async (job_id: any, poster_id: any) => {
+    const seeker_id = userData?.id;
+    try {
+      const res = await fetch(
+        "http://localhost:8000/mobile/secured/application/post",
+        {
+          method: "POST",
+          body: JSON.stringify({ job_id, seeker_id, poster_id }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Modal
@@ -274,7 +291,10 @@ const JobsList = () => {
           <View key={index} style={styles.jobCard}>
             <View style={styles.jobHeader}>
               <View>
-                <Text style={styles.title}>{job.title}</Text>
+                <Text style={styles.title}>
+                  {job.title} (Job ID : {job.job_id} )
+                </Text>
+                <JobItem job={job} />
                 <Text style={styles.badge}>New Posting</Text>
               </View>
               <Text style={styles.rate}>{job.status.toUpperCase()}</Text>
@@ -318,7 +338,7 @@ const JobsList = () => {
                 <Text style={styles.chatText}>Chat With Us</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => applyJob(job.title)}
+                onPress={() => handleJobApply(job.job_id, job.poster_id)}
                 style={styles.applyBtn}
               >
                 <Text style={styles.applyText}>Apply</Text>
