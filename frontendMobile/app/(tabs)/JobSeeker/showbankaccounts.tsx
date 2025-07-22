@@ -1,6 +1,7 @@
 import Feather from "@expo/vector-icons/Feather";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,47 +11,23 @@ import {
   Alert,
 } from "react-native";
 
+const FETCH_BANK_ACCOUNTS =
+  "http://localhost:8000/mobile/secured/bank/details/";
+
 interface BankAccount {
-  id: number;
-  holderFirstName: string;
-  holderLastName: string;
-  bankName: string;
+  wallet_id: number;
+  seeker_id: number;
+  bank: string;
+  holder: string;
+  bankACC: string;
   branch: string;
-  accountNumber: string;
-  fullAccountNumber: string;
+  fundingSource: string;
+  earnings: number;
 }
 
 const BankAccountsScreen = () => {
   // Sample bank accounts data - replace with your actual data management
-  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([
-    {
-      id: 1,
-      holderFirstName: "Amal",
-      holderLastName: "Perera",
-      bankName: "Sampath Bank",
-      branch: "Maharagama Branch",
-      accountNumber: "****1234",
-      fullAccountNumber: "1234567890123456",
-    },
-    {
-      id: 2,
-      holderFirstName: "Wasana",
-      holderLastName: "Fernando",
-      bankName: "Bank of Ceylon",
-      branch: "Kollupitiya Branch",
-      accountNumber: "****5678",
-      fullAccountNumber: "5678901234567890",
-    },
-    {
-      id: 3,
-      holderFirstName: "Malith",
-      holderLastName: "Perera",
-      bankName: "Sampath Bank",
-      branch: "Weliwita Branch",
-      accountNumber: "****9012",
-      fullAccountNumber: "9012345678901234",
-    },
-  ]);
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
 
   const handleAddNewAccount = () => {
     // Navigate to CreateBankAccount screen
@@ -72,13 +49,38 @@ const BankAccountsScreen = () => {
           style: "destructive",
           onPress: () => {
             setBankAccounts(
-              bankAccounts.filter((account) => account.id !== accountId)
+              bankAccounts.filter((account) => account.wallet_id !== accountId)
             );
           },
         },
       ]
     );
   };
+
+  useEffect(() => {
+    const fetchBankDetails = async () => {
+      const token = await AsyncStorage.getItem("token");
+      const userJson = await AsyncStorage.getItem("user");
+      const user = JSON.parse(userJson!);
+      const response = await fetch(FETCH_BANK_ACCOUNTS + `${user.id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        alert("Something went wrong");
+      }
+
+      const data = await response.json();
+
+      setBankAccounts(data.data);
+    };
+
+    fetchBankDetails();
+  }, []);
 
   const BankAccountCard = ({ account }: { account: BankAccount }) => (
     <View style={styles.accountCard}>
@@ -87,29 +89,27 @@ const BankAccountsScreen = () => {
           <Text style={styles.bankIconSmallText}>🏛️</Text>
         </View>
         <View style={styles.accountInfo}>
-          <Text style={styles.accountHolder}>
-            {account.holderFirstName} {account.holderLastName}
-          </Text>
-          <Text style={styles.bankName}>{account.bankName}</Text>
+          <Text style={styles.accountHolder}>{account.holder}</Text>
+          <Text style={styles.bankName}>{account.bank}</Text>
           <Text style={styles.branchName}>{account.branch}</Text>
         </View>
       </View>
 
       <View style={styles.accountDetails}>
         <Text style={styles.accountLabel}>Account Number</Text>
-        <Text style={styles.accountNumber}>{account.accountNumber}</Text>
+        <Text style={styles.accountNumber}>{account.bankACC}</Text>
       </View>
 
       <View style={styles.cardActions}>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => handleEditAccount(account.id)}
+          onPress={() => handleEditAccount(account.wallet_id)}
         >
           <Text style={styles.editButtonText}>Edit</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.deleteButton}
-          onPress={() => handleDeleteAccount(account.id)}
+          onPress={() => handleDeleteAccount(account.wallet_id)}
         >
           <Text style={styles.deleteButtonText}>Delete</Text>
         </TouchableOpacity>
@@ -150,7 +150,7 @@ const BankAccountsScreen = () => {
           </View>
         ) : (
           bankAccounts.map((account) => (
-            <BankAccountCard key={account.id} account={account} />
+            <BankAccountCard key={account.wallet_id} account={account} />
           ))
         )}
       </ScrollView>

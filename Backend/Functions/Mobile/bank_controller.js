@@ -30,6 +30,24 @@ const createBankAcc = async (req, res) => {
   });
 };
 
+// DESC: GET ALL BANK DETAILS BY SEEKER ID
+const getBankDetails = async (req, res) => {
+  const { seeker_id } = req.params;
+
+  const query =
+    "SELECT * FROM parttime_srilanka.seeker_wallet WHERE seeker_id = ?";
+  if (!seeker_id) {
+    return res.status(400).json({ error: "Seeker is not defined" });
+  }
+
+  connection.query(query, [seeker_id], (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: `Something went wrong: ${err}` });
+    }
+    return res.status(201).json({ data });
+  });
+};
+
 // DESC: WITHDRAWAL FUNCTION
 const withdrawal = async (req, res) => {
   const { wallet_id } = req.params;
@@ -74,4 +92,51 @@ const withdrawal = async (req, res) => {
   });
 };
 
-module.exports = { createBankAcc, withdrawal };
+const payment = async (req, res) => {
+  const insertQuery = `
+    INSERT INTO payment 
+    (poster_id, amount, payment_date, device_charge, reseller_charge, seeker_charge, service_charge, job_id) 
+    VALUES (?, ?, NOW(), (? * 0.05), (? * 0.10), (? * 0.70), (? * 0.15), ?)
+  `;
+
+  const updateSeekerWalletQuery = `
+    UPDATE parttime_srilanka.seeker_wallet 
+    SET earnings = earnings + ? 
+    WHERE seeker_id = ?
+  `;
+
+  const { poster_id, amount, job_id, seeker_id } = req.body;
+  if (!poster_id || !amount || !job_id) {
+    console.log(poster_id, amount, job_id);
+    return res.status(400).json({ error: "Required fields are empty" });
+  }
+
+  console.log(poster_id, amount, job_id);
+  const values = [poster_id, amount, amount, amount, amount, amount, job_id];
+
+  // Insert into payment table
+  connection.query(insertQuery, values, (err) => {
+    if (err) {
+      return res.status(500).json({ error: `Insert failed: ${err}` });
+    }
+
+    // Update seeker wallet
+    connection.query(
+      updateSeekerWalletQuery,
+      [amount * 0.7, seeker_id],
+      (err) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ error: `Wallet update failed: ${err}` });
+        }
+
+        return res
+          .status(201)
+          .json({ message: "Payment successful and wallet updated" });
+      }
+    );
+  });
+};
+
+module.exports = { createBankAcc, withdrawal, payment, getBankDetails };

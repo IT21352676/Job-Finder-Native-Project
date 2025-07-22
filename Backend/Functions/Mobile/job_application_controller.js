@@ -162,10 +162,10 @@ const viewJobSeekerData = async (req, res) => {
 
 // DESC: DISPLAY JOBS
 const displayApplications = async (req, res) => {
-  const { poster_id } = req.params.poster_id;
-
+  const { poster_id } = req.params;
+  console.log(poster_id);
   if (!poster_id) {
-    return res.status(400).json({ error: "Seeker is undefined" });
+    return res.status(400).json({ error: "Poster is undefined" });
   }
 
   const query = `

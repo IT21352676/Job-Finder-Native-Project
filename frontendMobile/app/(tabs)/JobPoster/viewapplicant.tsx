@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -33,7 +33,11 @@ interface Applicant {
 const ViewApplicantsScreen = () => {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
 
-  const handleApprove = async (applicantId: number, jobID: number) => {
+  const handleApprove = async (
+    applicantId: number,
+    jobID: number,
+    seekerId: number
+  ) => {
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await fetch(
@@ -56,8 +60,8 @@ const ViewApplicantsScreen = () => {
       alert("Job Application Accepted");
       Alert.alert("Success", "Job Application Accepted");
       router.push({
-        pathname: "/authentication/otpemail",
-        params: { jobId: jobID },
+        pathname: "/JobPoster/payment",
+        params: { jobId: jobID, seekerId: seekerId },
       });
     } catch (error: any) {
       console.error("Application error:", error);
@@ -154,9 +158,9 @@ const ViewApplicantsScreen = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "approved":
+      case "Accepted":
         return "#4CAF50";
-      case "declined":
+      case "Rejected":
         return "#F44336";
       default:
         return "#FF9800";
@@ -165,9 +169,9 @@ const ViewApplicantsScreen = () => {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "approved":
+      case "Accepted":
         return "Approved";
-      case "declined":
+      case "Rejected":
         return "Declined";
       default:
         return "Pending";
@@ -206,12 +210,14 @@ const ViewApplicantsScreen = () => {
 
           const data = await response.json();
           setApplicants(data.data);
+          console.log(data.data);
         }
       } catch (error: any) {
         console.error("Error fetching applications:", error.message);
       }
-      fetchApplications();
     };
+
+    fetchApplications();
   }, []);
 
   return (
@@ -299,7 +305,11 @@ const ViewApplicantsScreen = () => {
                   <TouchableOpacity
                     style={styles.approveButton}
                     onPress={() =>
-                      handleApprove(applicant.application_id, applicant.job_id)
+                      handleApprove(
+                        applicant.application_id,
+                        applicant.job_id,
+                        applicant.seeker_id
+                      )
                     }
                   >
                     <Feather name="check" size={16} color="white" />
