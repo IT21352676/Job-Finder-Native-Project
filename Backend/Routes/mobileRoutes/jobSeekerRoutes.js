@@ -9,12 +9,13 @@ const {
   getUserDetails,
   updatePersonalInfoHandler,
   uploadProfilePictureHandler,
+  retrieveProfilePictureHandler,
 } = require("../../Functions/JobSeeker/JobSeekerProfile");
 
 router.put("/job-seeker/upload-profile-picture", uploadProfilePictureHandler);
 router.get(
   "/job-seeker/retrieve-profile-picture/:seeker_id",
-  retrieveProfilePicture
+  retrieveProfilePictureHandler
 );
 router.put("/job-seeker/edit-personal-info", updatePersonalInfoHandler);
 router.put("/job-seeker/add-skills", ...addSkills);

@@ -74,8 +74,6 @@ const ProfileScreen = () => {
     }
   }, [userData?.id, token]);
 
-  //console.log(profilePicture);
-
   const user = {
     name: "Chenura Silva",
     email: "chenura@example.com",

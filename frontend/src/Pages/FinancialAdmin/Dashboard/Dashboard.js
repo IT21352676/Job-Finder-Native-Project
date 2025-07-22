@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { DollarOutlined } from "@ant-design/icons";
-import { Typography, Card, Space, Statistic, Spin, message } from "antd";
+import {
+  Typography,
+  Card,
+  Space,
+  Statistic,
+  Spin,
+  message,
+  Button,
+  Modal,
+} from "antd";
 import BarGraph from "../../../components/FinancialAdmin/Graphs/TestGraph";
 import axios from "axios";
 import RevenueGraph from "../../../components/FinancialAdmin/Graphs/RevenueGraph";
@@ -74,7 +83,20 @@ function Dashboard() {
   const [revenueData, setRevenueData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
   const [forecast, setForecast] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     axios
@@ -110,14 +132,14 @@ function Dashboard() {
       })
       .then((response) => {
         setForecast(response.data.content);
+        console.log(response.data.content);
       })
       .catch((error) => {
         message.error("Error fetching revenue data");
         console.error(error);
+        setError(error.response.data.error.error.message);
       });
   }
-
-  getForecast();
 
   if (loading || !incomeData || !revenueData) {
     return <Spin size="large" tip="Loading..." />;
@@ -128,8 +150,40 @@ function Dashboard() {
       <Title level={2} style={{ marginBottom: "24px", color: "#1890ff" }}>
         Financial Admin Dashboard
       </Title>
+      <div style={{ marginTop: 20, marginBottom: 20 }}>
+        {" "}
+        <Button
+          color="default"
+          variant="solid"
+          onClick={() => {
+            showModal();
+            getForecast();
+          }}
+        >
+          View AI Forecast
+        </Button>
+      </div>
+      <Modal
+        title="Financial Forecast"
+        closable={{ "aria-label": "Custom Close Button" }}
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        {!forecast && !error && <p>Analyzing ...</p>}
+        {forecast && (
+          <p>
+            {forecast.split("\n").map((line, index) => (
+              <span key={index}>
+                {line}
+                <br />
+              </span>
+            ))}
+          </p>
+        )}
+        {error && <p>Can't generate forecat at this moment Error : {error}</p>}
+      </Modal>
 
-      <text>{forecast}</text>
       <div style={dashboardStyles.cardsContainer}>
         {[
           {
