@@ -132,7 +132,6 @@ function Dashboard() {
       })
       .then((response) => {
         setForecast(response.data.content);
-        console.log(response.data.content);
       })
       .catch((error) => {
         message.error("Error fetching revenue data");

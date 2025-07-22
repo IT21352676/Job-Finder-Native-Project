@@ -170,6 +170,13 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
               <Text style={styles.menuText}>VIEW APPLICANTS</Text>
             </Link>
           </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
+            <Feather name="message-circle" size={24} color="white" />
+            <Link href="/(tabs)/JobPoster/viewReviews">
+              <Text style={styles.menuText}>VIEW REVIEWS</Text>
+            </Link>
+          </TouchableOpacity>
         </View>
       </ScrollView>
 
