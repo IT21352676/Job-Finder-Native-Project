@@ -17,6 +17,9 @@ import Feather from "@expo/vector-icons/Feather";
 import { Link } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const FETCH_DASHBOARD_DATA =
+  "http://localhost:8000/mobile/secured/dashboard/amount/";
+
 interface NavigationProp {
   navigate: (screen: string) => void;
   goBack: () => void;
@@ -106,6 +109,33 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
       console.error(err);
     }
   };
+  const [earnings, setEarnings] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchDashboardDataEarnings = async () => {
+      const response = await fetch(FETCH_DASHBOARD_DATA + `${userData?.id}`, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        alert("Something went wrong");
+        return;
+      }
+
+      const result = await response.json(); // result: array of objects
+
+      if (!result || result.length === 0) {
+        setEarnings(0);
+      } else {
+        const earningValue = parseFloat(result[0]?.earnings || "0");
+        setEarnings(earningValue);
+      }
+
+      console.log(result);
+    };
+
+    fetchDashboardDataEarnings();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -131,7 +161,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
         {/* Balance Card */}
         <View style={styles.balanceCard}>
           <Text style={styles.balanceLabel}>Total Balance</Text>
-          <Text style={styles.balanceAmount}>Rs. 25,000</Text>
+          <Text style={styles.balanceAmount}>{`Rs. ${earnings}`}</Text>
         </View>
 
         {/* Menu Grid */}
