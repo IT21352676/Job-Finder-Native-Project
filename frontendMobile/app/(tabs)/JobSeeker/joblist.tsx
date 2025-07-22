@@ -244,8 +244,13 @@ const JobsList = () => {
         }
       );
 
+      if (!res.ok) {
+        alert("Something went wrong");
+      }
+
       const data = await res.json();
       console.log(data);
+      alert("Application submitted");
     } catch (err) {
       console.error(err);
     }
