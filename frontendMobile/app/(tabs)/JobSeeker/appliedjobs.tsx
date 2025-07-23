@@ -152,6 +152,7 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
         <TouchableOpacity style={styles.jobCard} activeOpacity={0.8}>
           {pendingJobs?.map((job: any) => (
             <JobCard
+              user_id={userData?.id}
               job_id={job.job_id}
               apply_date={job.apply_date}
               status={job.status}
@@ -162,6 +163,7 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
 
         {acceptedJobs?.map((job: any, index: any) => (
           <JobCard
+            user_id={userData?.id}
             job_id={job.job_id}
             apply_date={job.apply_date}
             status={job.status}
@@ -171,6 +173,7 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
 
         {rejectedJobs?.map((job: any, index: any) => (
           <JobCard
+            user_id={userData?.id}
             job_id={job.job_id}
             apply_date={job.apply_date}
             status={job.status}

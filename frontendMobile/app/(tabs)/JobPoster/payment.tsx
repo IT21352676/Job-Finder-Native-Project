@@ -94,6 +94,26 @@ const PaymentPage = () => {
       const token = await AsyncStorage.getItem("token");
       const userJson = await AsyncStorage.getItem("user");
       const user = JSON.parse(userJson!);
+
+      const res = await fetch(
+        `http://localhost:8000/mobile/secured/notification/payment-approve`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            jobId: job_id,
+            fromUserId: user.id,
+            toUserId: seekerId,
+            amount,
+          }),
+        }
+      );
+
+      const data = await res.json();
+      console.log("Payment approved successfully:", data);
+
       const response = await fetch(PAYMENT_API, {
         method: "POST",
         headers: {

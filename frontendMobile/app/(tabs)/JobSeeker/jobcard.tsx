@@ -13,10 +13,37 @@ import {
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 
-const JobCard = ({ job_id, apply_date, status }: any) => {
+const JobCard = ({ job_id, apply_date, status, user_id }: any) => {
   const [jobDetails, setJobDetails] = useState<any>();
 
-  console.log(jobDetails);
+  const [rating, setRating] = useState("");
+  const [review, setReview] = useState("");
+
+  const [isReviewModalVisible, setReviewModalVisible] = useState(false);
+  const addReview = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/mobile/secured/add-job-review",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            job_id,
+            user_id,
+            rating,
+            review,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log(data);
+    } catch (err) {
+      console.error("Network error:", err);
+    }
+  };
 
   useEffect(() => {
     const getJobDetails = async () => {
@@ -95,6 +122,12 @@ const JobCard = ({ job_id, apply_date, status }: any) => {
       </View>
 
       <Text style={styles.jobDescription}>{jobDetails?.description}</Text>
+      <TouchableOpacity
+        style={styles.actionButtonReview}
+        onPress={() => setReviewModalVisible(true)}
+      >
+        <Text style={styles.actionTextReview}>Add review</Text>
+      </TouchableOpacity>
 
       <View style={styles.jobActions}>
         <TouchableOpacity style={styles.actionButton}>
@@ -106,11 +139,83 @@ const JobCard = ({ job_id, apply_date, status }: any) => {
           <Text style={styles.actionText}>Call</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal
+        visible={isReviewModalVisible}
+        transparent={true}
+        animationType="slide"
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.reviewModal}>
+            <Text style={styles.modalTitle}>Add Review</Text>
+
+            <TextInput
+              placeholder="Rating (1-5)"
+              value={rating}
+              onChangeText={setRating}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+
+            <TextInput
+              placeholder="Write your review"
+              value={review}
+              onChangeText={setReview}
+              style={[styles.input, { height: 100 }]}
+              multiline
+            />
+
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={async () => {
+                  await addReview();
+                  setReviewModalVisible(false);
+                  setRating("");
+                  setReview("");
+                }}
+              >
+                <Text style={{ color: "white" }}>Submit</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: "#aaa" }]}
+                onPress={() => setReviewModalVisible(false)}
+              >
+                <Text style={{ color: "white" }}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  reviewModal: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: "90%",
+    elevation: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 15,
+    fontSize: 14,
+  },
+  modalButton: {
+    backgroundColor: "#FF8C42",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   header: {
     backgroundColor: "#FF8C42",
@@ -224,6 +329,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     justifyContent: "center",
   },
+
+  actionButtonReview: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "#f83a00ff",
+    width: 200,
+
+    marginHorizontal: 2,
+    justifyContent: "center",
+  },
+  actionTextReview: { fontSize: 12, marginLeft: 5, color: "white" },
   actionText: { fontSize: 12, marginLeft: 5, color: "#666" },
   emptyState: {
     alignItems: "center",

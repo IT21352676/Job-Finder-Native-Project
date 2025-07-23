@@ -2,11 +2,12 @@ const router = require("express").Router();
 
 router.post(
   "/add-job-review",
-  require("../../Functions/Ratings&Reviews/Reviews").addJobReview
+  require("../../Functions/Ratings&Reviews/Reviews").addJobReviewHandler
 );
 router.get(
   "/get-job-reviews-by-user/:user_id",
-  require("../../Functions/Ratings&Reviews/Reviews").getJobReviewsByUserId
+  require("../../Functions/Ratings&Reviews/Reviews")
+    .getJobReviewsByUserIdHandler
 );
 router.get(
   "/get-job-reviews-by-job/:job_id",

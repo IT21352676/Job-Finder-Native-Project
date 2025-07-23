@@ -265,4 +265,5 @@ module.exports = {
   getUserDetails,
   updatePersonalInfoHandler,
   uploadProfilePictureHandler,
+  retrieveProfilePictureHandler,
 };

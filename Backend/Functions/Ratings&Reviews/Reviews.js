@@ -2,12 +2,12 @@ const connection = require("../../Services/connection");
 const { authenticateToken } = require("../Middlewares/TokenAuth");
 
 const addJobReviewHandler = (req, res) => {
-  const addQuery = `INSERT INTO parttime_srilanka.job_reviews (review_id, job_id, user_id, rating, review) VALUES (?, ?, ?, ?, ?)`;
-  const { review_id, job_id, user_id, rating, review } = req.body;
-  if (!review_id || !job_id || !user_id || !rating || !review) {
+  const addQuery = `INSERT INTO parttime_srilanka.job_reviews (job_id, user_id, rating, review) VALUES (?, ?, ?, ?)`;
+  const { job_id, user_id, rating, review } = req.body;
+  if (!job_id || !user_id || !rating || !review) {
     return res.status(400).json({ error: "All fields are required" });
   }
-  const values = [review_id, job_id, user_id, rating, review];
+  const values = [job_id, user_id, rating, review];
   connection.query(addQuery, values, (err, result) => {
     if (err) {
       console.error("Error adding review:", err);
@@ -109,4 +109,6 @@ module.exports = {
   addSeekerReview,
   getSeekerReviewsByPosterId,
   getSeekerReviewsBySeekerId,
+  addJobReviewHandler,
+  getJobReviewsByUserIdHandler,
 };

@@ -12,6 +12,7 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import { Link, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { socket } from "./homepage";
 
 const FETCH_APPLICATIONS_API_URL =
   "http://localhost:8000/mobile/secured/applications/job-poster/";
@@ -31,6 +32,40 @@ interface Applicant {
 }
 
 const ViewApplicantsScreen = () => {
+  interface User {
+    id: number;
+    firstname: string;
+    lastname: string;
+    email: string;
+    role: string;
+  }
+  const [userData, setUserData] = useState<User>({} as User);
+
+  const fetchStoredData = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userJson = await AsyncStorage.getItem("user");
+
+      if (token && userJson) {
+        const user = JSON.parse(userJson);
+        console.log("Auto-login user:", user.firstname);
+        console.log("Token:", token);
+
+        setUserData(user);
+      } else {
+        console.log("Auth data not found");
+      }
+    } catch (error) {
+      console.error("Error retrieving login data:", error);
+    }
+  }, []);
+
+  socket.emit("register", userData.id, "Job Poster");
+
+  useEffect(() => {
+    fetchStoredData();
+  }, [fetchStoredData]);
+
   const [applicants, setApplicants] = useState<Applicant[]>([]);
 
   const handleApprove = async (
@@ -54,6 +89,21 @@ const ViewApplicantsScreen = () => {
       if (!response.ok) {
         throw new Error("Failed to fetch jobs");
       }
+
+      const res = await fetch(
+        `http://localhost:8000/mobile/secured/notification/accept-job`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            jobId: jobID,
+            fromUserId: userData.id,
+            toUserId: seekerId,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -88,8 +138,26 @@ const ViewApplicantsScreen = () => {
     // );
   };
 
-  const handleDecline = async (applicantId: number) => {
+  const handleDecline = async (
+    applicantId: number,
+    jobID: number,
+    seekerId: number
+  ) => {
     try {
+      const res = await fetch(
+        `http://localhost:8000/mobile/secured/notification/decline-job`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            jobId: jobID,
+            fromUserId: userData.id,
+            toUserId: seekerId,
+          }),
+        }
+      );
       const token = await AsyncStorage.getItem("token");
       const response = await fetch(
         REJECT_APPLICATION_API_URL + `${applicantId}`,
@@ -319,7 +387,13 @@ const ViewApplicantsScreen = () => {
 
                   <TouchableOpacity
                     style={styles.declineButton}
-                    onPress={() => handleDecline(applicant.application_id)}
+                    onPress={() =>
+                      handleDecline(
+                        applicant.application_id,
+                        applicant.job_id,
+                        applicant.seeker_id
+                      )
+                    }
                   >
                     <Feather name="x" size={16} color="white" />
                     <Text style={styles.buttonText}>Decline</Text>

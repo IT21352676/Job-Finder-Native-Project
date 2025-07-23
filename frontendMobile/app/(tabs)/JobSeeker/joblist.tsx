@@ -93,6 +93,35 @@ const JobsList = () => {
   };
 
   const toastConfig = {
+    job_application_decline: ({ text1, text2, onPress, ...rest }: any) => (
+      <BaseToast
+        {...rest}
+        contentContainerStyle={{ paddingRight: 12 }}
+        text1={text1}
+        text2={text2}
+      />
+    ),
+    job_application_accept: ({ text1, text2, onPress, ...rest }: any) => (
+      <BaseToast
+        {...rest}
+        contentContainerStyle={{ paddingRight: 12 }}
+        text1={text1}
+        text2={text2}
+      />
+    ),
+    payment_approved_notification: ({
+      text1,
+      text2,
+      onPress,
+      ...rest
+    }: any) => (
+      <BaseToast
+        {...rest}
+        contentContainerStyle={{ paddingRight: 12 }}
+        text1={text1}
+        text2={text2}
+      />
+    ),
     chat_accepted_notification: ({ text1, text2, onPress, ...rest }: any) => (
       <BaseToast
         {...rest}
@@ -165,7 +194,46 @@ const JobsList = () => {
     ),
   };
 
-  const listenChatAcceptNotification = () => {
+  const listenNotification = () => {
+    socket.on("job_application_decline", (data) => {
+      console.log("Received Accepted Notification:", data);
+
+      setTimeout(() => {
+        Toast.show({
+          type: "job_application_decline",
+          text1: "Job apllication declined",
+          text2: `Your appliation declined for job ID : ${data.jobId}`,
+          position: "top",
+        });
+      }, 2000);
+    });
+
+    socket.on("job_application_accept", (data) => {
+      console.log("Received Accepted Notification:", data);
+
+      setTimeout(() => {
+        Toast.show({
+          type: "job_application_accept",
+          text1: "Job application accepted",
+          text2: `Your appliation accepted for job ID : ${data.jobId}`,
+          position: "top",
+        });
+      }, 2000);
+    });
+
+    socket.on("new_payment_approve", (data) => {
+      console.log("Received Accepted Notification:", data);
+
+      setTimeout(() => {
+        Toast.show({
+          type: "payment_approved_notification",
+          text1: "Payment approved",
+          text2: `Your $${data.amount} payment approved for job ID : ${data.jobId}`,
+          position: "top",
+        });
+      }, 2000);
+    });
+
     socket.on("accepted_notification", (data) => {
       console.log("Received Accepted Notification:", data);
       roomIdRef.current = data.roomId;
@@ -184,7 +252,7 @@ const JobsList = () => {
     });
   };
   useEffect(() => {
-    listenChatAcceptNotification();
+    listenNotification();
   }, []);
 
   const handleChatWithUS = async (posterId: string, jobId: string) => {
@@ -235,6 +303,19 @@ const JobsList = () => {
   const handleJobApply = async (job_id: any, poster_id: any) => {
     const seeker_id = userData?.id;
     try {
+      const res1 = await fetch(
+        "http://localhost:8000/mobile/secured/notification/apply-job",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            jobId: job_id,
+            fromUserId: seeker_id,
+            toUserId: poster_id,
+          }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
       const res = await fetch(
         "http://localhost:8000/mobile/secured/application/post",
         {
