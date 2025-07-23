@@ -2,6 +2,9 @@ const {
   chatRequest,
   getChatRequests,
   acceptChatRequest,
+  applyJob,
+  acceptJob,
+  declineJob,
 } = require("../../Functions/Notifications/Notifications");
 
 const express = require("express");
@@ -17,6 +20,16 @@ module.exports = (io) => {
 
   router.post("/notification/:notification_id/accept", (req, res) => {
     acceptChatRequest(req, res, io);
+  });
+
+  router.post("/notification/apply-job", (req, res) => {
+    applyJob(req, res, io);
+  });
+  router.post("/notification/accept-job", (req, res) => {
+    acceptJob(req, res, io);
+  });
+  router.post("/notification/decline-job", (req, res) => {
+    declineJob(req, res, io);
   });
 
   return router;

@@ -18,8 +18,9 @@ import { Link, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChatRequestScreen from "./chatrequest";
 import io from "socket.io-client";
+import Toast, { BaseToast } from "react-native-toast-message";
 
-const socket = io("http://localhost:8001");
+export const socket = io("http://localhost:8001");
 
 interface NavigationProp {
   navigate: (screen: string) => void;
@@ -74,6 +75,16 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
       ]);
     }, 800);
   };
+  const toastConfig = {
+    job_apply_notification: ({ text1, text2, onPress, ...rest }: any) => (
+      <BaseToast
+        {...rest}
+        contentContainerStyle={{ paddingRight: 12 }}
+        text1={text1}
+        text2={text2}
+      />
+    ),
+  };
 
   const navItems = [
     { id: "Home", icon: "home" as const, text: "Home" },
@@ -114,6 +125,25 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
   useEffect(() => {
     fetchStoredData();
   }, [fetchStoredData]);
+
+  const listenJobApplyNotification = () => {
+    socket.on("new_job_apply", (data: any) => {
+      console.log("Received Notification:", data);
+      setTimeout(() => {
+        Toast.show({
+          type: "job_apply_notification",
+          text1: `New job application`,
+          text2: `User ${data.seekerId} applied for job ${data.jobId}`,
+
+          position: "top",
+        });
+      }, 2000);
+    });
+  };
+
+  useEffect(() => {
+    listenJobApplyNotification();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -246,6 +276,8 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
       <View style={styles.toastWrapper}>
         <ChatRequestScreen user={userData} socket={socket} />
       </View>
+
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };
