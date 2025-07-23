@@ -139,6 +139,7 @@ const ViewApplicantsScreen = () => {
 
   const handleViewResume = (applicant: Applicant) => {
     // Navigate to resume page with applicant data
+    console.log("Pressed");
     router.push({
       pathname: "/(tabs)/JobPoster/viewresume",
       params: {
@@ -150,10 +151,6 @@ const ViewApplicantsScreen = () => {
 
   const handleCall = (phone: string) => {
     Alert.alert("Call", `Calling ${phone}...`);
-  };
-
-  const handleBackPress = () => {
-    router.back();
   };
 
   const getStatusColor = (status: string) => {
@@ -220,6 +217,10 @@ const ViewApplicantsScreen = () => {
     fetchApplications();
   }, []);
 
+  const handleBackPress = () => {
+    router.back();
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FF8C42" barStyle="light-content" />
@@ -227,7 +228,7 @@ const ViewApplicantsScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTopRow}>
-          <TouchableOpacity style={styles.backButton}>
+          <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
             <Feather name="arrow-left" size={24} color="white" />
           </TouchableOpacity>
           <View style={styles.headerTitleContainer}>
@@ -294,7 +295,7 @@ const ViewApplicantsScreen = () => {
 
                   <TouchableOpacity
                     style={styles.resumeButton}
-                    onPress={() => handleViewResume}
+                    onPress={() => handleViewResume(applicant)}
                   >
                     <Feather name="eye" size={16} color="white" />
                     <Text style={styles.buttonText}>View Resume</Text>

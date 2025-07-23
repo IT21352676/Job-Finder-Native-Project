@@ -52,7 +52,7 @@ const ViewPostedJobsScreen = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
 
   const handleDeleteJob = async (jobId: number) => {
-    const jobToDelete = jobs.find((job) => job.job_id === jobId);
+    // const jobToDelete = jobs.find((job) => job.job_id === jobId);
 
     try {
       const token = await AsyncStorage.getItem("token");

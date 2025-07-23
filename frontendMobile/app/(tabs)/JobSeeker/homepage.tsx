@@ -135,7 +135,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
     };
 
     fetchDashboardDataEarnings();
-  }, []);
+  }, [userData?.id]);
 
   return (
     <SafeAreaView style={styles.container}>

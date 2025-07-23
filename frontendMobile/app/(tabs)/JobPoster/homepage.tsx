@@ -242,13 +242,13 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
       </ScrollView>
 
       {/* Floating AI Bot */}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.floatingBot}
         onPress={() => setChatVisible(true)}
         activeOpacity={0.8}
       >
         <Feather name="message-circle" size={26} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Chat Modal */}
       <Modal

@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -51,6 +52,10 @@ const ChatScreen = ({ socket, roomId, userId, setModalVisible }: Props) => {
       socket.off("receive_message", handleReceiveMessage);
     };
   }, []);
+
+  const handleBackPress = () => {
+    router.back();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
