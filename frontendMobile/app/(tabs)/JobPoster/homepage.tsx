@@ -82,6 +82,30 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
     }, 800);
   };
   const toastConfig = {
+    chat_notification: ({ text1, text2, onPress, ...rest }: any) => (
+      <BaseToast
+        {...rest}
+        contentContainerStyle={{ paddingRight: 12 }}
+        text1={text1}
+        text2={text2}
+        renderTrailingIcon={() => (
+          <TouchableOpacity
+            onPress={onPress}
+            style={{
+              backgroundColor: "#FF8C42",
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              borderRadius: 4,
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: "white", fontWeight: "bold" }}>
+              Accept & Open Chat
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
+    ),
     job_apply_notification: ({ text1, text2, onPress, ...rest }: any) => (
       <BaseToast
         {...rest}
@@ -271,7 +295,7 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
 
           <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="message-circle" size={24} color="white" />
-            <Link href="/(tabs)/JobPoster/viewreviews">
+            <Link href="/(tabs)/JobPoster/viewReviews">
               <Text style={styles.menuText}>VIEW REVIEWS</Text>
             </Link>
           </TouchableOpacity>
@@ -279,13 +303,13 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
       </ScrollView>
 
       {/* Floating AI Bot */}
-      {/* <TouchableOpacity
+      <TouchableOpacity
         style={styles.floatingBot}
         onPress={() => setChatVisible(true)}
         activeOpacity={0.8}
       >
         <Feather name="message-circle" size={26} color="white" />
-      </TouchableOpacity> */}
+      </TouchableOpacity>
 
       {/* Chat Modal */}
       <Modal

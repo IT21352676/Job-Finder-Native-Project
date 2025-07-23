@@ -5,6 +5,7 @@ const {
   applyJob,
   acceptJob,
   declineJob,
+  paymentApprove,
 } = require("../../Functions/Notifications/Notifications");
 
 const express = require("express");
@@ -20,6 +21,10 @@ module.exports = (io) => {
 
   router.post("/notification/:notification_id/accept", (req, res) => {
     acceptChatRequest(req, res, io);
+  });
+
+  router.post("/notification/payment-approve", (req, res) => {
+    paymentApprove(req, res, io);
   });
 
   router.post("/notification/apply-job", (req, res) => {
