@@ -154,8 +154,10 @@ const viewJobSeekerData = async (req, res) => {
 
   connection.query(query, values, (err, data) => {
     if (err) {
+      console.log(err);
       return res.status(500).json({ error: `Something went wrong: ${err}` });
     }
+    // console.log("Query result:", data);
     return res.status(200).json({ data });
   });
 };
@@ -163,7 +165,7 @@ const viewJobSeekerData = async (req, res) => {
 // DESC: DISPLAY JOBS
 const displayApplications = async (req, res) => {
   const { poster_id } = req.params;
-  console.log(poster_id);
+  // console.log(poster_id);
   if (!poster_id) {
     return res.status(400).json({ error: "Poster is undefined" });
   }

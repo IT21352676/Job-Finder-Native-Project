@@ -15,6 +15,7 @@ import Toast, { BaseToast } from "react-native-toast-message";
 import { TextInput } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import ChatScreen from "./chatscreen";
+import { router } from "expo-router";
 
 interface User {
   id: number;
@@ -116,6 +117,10 @@ const ChatRequestScreen = ({ user, socket }: Props) => {
     } catch (err) {
       console.error("Error accepting chat request:", err);
     }
+  };
+
+  const handleBackPress = () => {
+    router.back();
   };
 
   return (

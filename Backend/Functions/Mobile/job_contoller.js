@@ -152,20 +152,25 @@ const deleteJob = async (req, res) => {
     return res.status(400).json({ error: "job_id is required" });
   }
 
-  const deleteQuery = "DELETE FROM parttime_srilanka.job WHERE job_id = ?";
+  const deleteApplications =
+    "DELETE FROM parttime_srilanka.job_application WHERE job_id = ?";
+  const deleteJob = "DELETE FROM parttime_srilanka.job WHERE job_id = ?";
 
-  connection.query(deleteQuery, [job_id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: `Database error: ${err.message}` });
+  connection.query(deleteApplications, [job_id], (err1, res1) => {
+    if (err1) {
+      console.error("Failed to delete related applications:", err1);
+      return;
     }
 
-    if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ error: "No job found with the given job_id" });
-    }
+    connection.query(deleteJob, [job_id], (err2, res2) => {
+      if (err2) {
+        console.error("Failed to delete job:", err2);
+        return;
+      }
 
-    return res.status(200).json({ message: "Job deleted successfully" });
+      console.log("Job and related applications deleted successfully");
+      return res.status(201).json({ message: "Deleted successfully" });
+    });
   });
 };
 

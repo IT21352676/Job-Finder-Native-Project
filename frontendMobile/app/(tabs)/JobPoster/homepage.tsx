@@ -22,6 +22,12 @@ import Toast, { BaseToast } from "react-native-toast-message";
 
 export const socket = io("http://localhost:8001");
 
+const FETCH_DASHBOARD_APP_DATA =
+  "http://localhost:8000/mobile/secured/dashboard/applications/";
+
+const FETCH_DASHBOARD_JOB_DATA =
+  "http://localhost:8000/mobile/secured/dashboard/jobs/";
+
 interface NavigationProp {
   navigate: (screen: string) => void;
   goBack: () => void;
@@ -126,6 +132,68 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
     fetchStoredData();
   }, [fetchStoredData]);
 
+  const [applications, setApplications] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchDashboardDataEarnings = async () => {
+      const response = await fetch(
+        FETCH_DASHBOARD_APP_DATA + `${userData?.id}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        alert("Something went wrong");
+        return;
+      }
+
+      const result = await response.json(); // result: array of objects
+
+      if (!result || result.length === 0) {
+        setApplications(0);
+      } else {
+        const applicationValue = parseFloat(result[0].count || "0");
+        setApplications(applicationValue);
+      }
+
+      console.log(result);
+    };
+
+    fetchDashboardDataEarnings();
+  }, []);
+
+  const [jobs, setjobs] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchDashboardDataEarnings = async () => {
+      const response = await fetch(
+        FETCH_DASHBOARD_JOB_DATA + `${userData?.id}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        alert("Something went wrong");
+        return;
+      }
+
+      const result = await response.json(); // result: array of objects
+
+      if (!result || result.length === 0) {
+        setjobs(0);
+      } else {
+        const applicationValue = parseFloat(result[0].count || "0");
+        setjobs(applicationValue);
+      }
+
+      console.log(result);
+    };
+
+    fetchDashboardDataEarnings();
+  }, []);
+
   const listenJobApplyNotification = () => {
     socket.on("new_job_apply", (data: any) => {
       console.log("Received Notification:", data);
@@ -170,11 +238,11 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <Text style={styles.statLabel}>Active Jobs</Text>
-            <Text style={styles.statAmount}>12</Text>
+            <Text style={styles.statAmount}>{jobs}</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statLabel}>Total Applications</Text>
-            <Text style={styles.statAmount}>89</Text>
+            <Text style={styles.statAmount}>{applications}</Text>
           </View>
         </View>
 
@@ -203,7 +271,7 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
 
           <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="message-circle" size={24} color="white" />
-            <Link href="/(tabs)/JobPoster/viewReviews">
+            <Link href="/(tabs)/JobPoster/viewreviews">
               <Text style={styles.menuText}>VIEW REVIEWS</Text>
             </Link>
           </TouchableOpacity>
@@ -211,13 +279,13 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
       </ScrollView>
 
       {/* Floating AI Bot */}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.floatingBot}
         onPress={() => setChatVisible(true)}
         activeOpacity={0.8}
       >
         <Feather name="message-circle" size={26} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Chat Modal */}
       <Modal

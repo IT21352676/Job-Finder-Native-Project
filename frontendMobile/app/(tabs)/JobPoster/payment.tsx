@@ -132,7 +132,10 @@ const PaymentPage = () => {
       }
 
       alert("Payment completed");
-      router.push("/(tabs)/JobPoster/paymentsuccess");
+      router.push({
+        pathname: "/(tabs)/JobPoster/paymentsuccess",
+        params: { amount: jobsData?.hourly_title },
+      });
     } catch (error: any) {
       console.error("Error completing payment:", error);
     }

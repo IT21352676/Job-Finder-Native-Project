@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -151,6 +151,10 @@ const EditJobScreen = () => {
 
     fetchJob();
   }, [jobId]);
+
+  const handleBackPress = () => {
+    router.back();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
