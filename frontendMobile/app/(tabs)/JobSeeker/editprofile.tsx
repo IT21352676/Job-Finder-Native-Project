@@ -133,7 +133,12 @@ const EditProfileScreen = ({ navigation }: any) => {
         }
       );
 
+      if (!response.ok) {
+        alert("Something went wrong");
+      }
+
       const data = await response.json();
+      alert("Profile updated!");
       console.log(data);
     } catch (err) {
       console.error("Network error:", err);

@@ -197,11 +197,11 @@ const PaymentPage = () => {
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Service Fee</Text>
-            {`$ ${((Number(jobsData?.hourly_title) || 0) * 0.1).toFixed(2)}`}
+            {`Rs. ${((Number(jobsData?.hourly_title) || 0) * 0.1).toFixed(2)}`}
           </View>
           <View style={[styles.summaryRow, styles.totalRow]}>
             <Text style={styles.totalLabel}>Amount</Text>
-            {`$ ${Number(jobsData?.hourly_title).toFixed(2)}`}
+            {`Rs. ${Number(jobsData?.hourly_title).toFixed(2)}`}
           </View>
         </View>
 

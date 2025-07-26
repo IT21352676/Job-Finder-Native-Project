@@ -161,7 +161,7 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
     };
 
     fetchDashboardDataEarnings();
-  }, []);
+  }, [userData?.id]);
 
   const [jobs, setjobs] = useState<number | null>(null);
 
@@ -192,7 +192,7 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
     };
 
     fetchDashboardDataEarnings();
-  }, []);
+  }, [userData?.id]);
 
   const listenJobApplyNotification = () => {
     socket.on("new_job_apply", (data: any) => {

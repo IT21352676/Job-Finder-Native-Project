@@ -22,6 +22,7 @@ interface NavigationProp {
 interface PendingJobsProps {
   navigation: NavigationProp;
 }
+
 interface User {
   id: number;
   firstname: string;
@@ -38,8 +39,11 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
   const [acceptedJobs, setAcceptedJobs] = useState([] as any);
   const [pendingJobs, setPendingJobs] = useState([] as any);
   const [rejectedJobs, setRejectedJobs] = useState([] as any);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [userData, setUserData] = useState<User>();
+
+  const filterOptions = ["All", "Pending", "Accepted", "Rejected"];
 
   const fetchStoredData = useCallback(async () => {
     try {
@@ -50,7 +54,6 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
         const user = JSON.parse(userJson);
         console.log("Auto-login user:", user.firstname);
         console.log("Token:", token);
-
         setUserData(user);
       }
     } catch (error) {
@@ -68,42 +71,70 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
         `http://localhost:8000/mobile/secured/application/accept/${userData?.id}`
       );
       const data = await res.json();
-      setAcceptedJobs(data.data);
+      setAcceptedJobs(data.data || []);
     } catch (err) {
-      console.error("Failed to fetch joblist:", err);
+      console.error("Failed to fetch accepted jobs:", err);
       setAcceptedJobs([]);
     }
   };
+
   const getPendingJobs = async () => {
     try {
       const res = await fetch(
         `http://localhost:8000/mobile/secured/application/pending/${userData?.id}`
       );
       const data = await res.json();
-      setPendingJobs(data.data);
+      setPendingJobs(data.data || []);
       console.log(data);
     } catch (err) {
-      console.error("Failed to fetch joblist:", err);
+      console.error("Failed to fetch pending jobs:", err);
       setPendingJobs([]);
     }
   };
+
   const getRejectedJobs = async () => {
     try {
       const res = await fetch(
         `http://localhost:8000/mobile/secured/application/reject/${userData?.id}`
       );
       const data = await res.json();
-      setRejectedJobs(data.data);
+      setRejectedJobs(data.data || []);
     } catch (err) {
-      console.error("Failed to fetch joblist:", err);
+      console.error("Failed to fetch rejected jobs:", err);
       setRejectedJobs([]);
     }
   };
+
   useEffect(() => {
-    getAcceptedJobs();
-    getPendingJobs();
-    getRejectedJobs();
+    if (userData?.id) {
+      setIsLoading(true);
+      Promise.all([
+        getAcceptedJobs(),
+        getPendingJobs(),
+        getRejectedJobs(),
+      ]).finally(() => {
+        setIsLoading(false);
+      });
+    }
   }, [userData]);
+
+  // Filter jobs based on selected filter
+  const getFilteredJobs = () => {
+    switch (selectedFilter) {
+      case "Pending":
+        return pendingJobs;
+      case "Accepted":
+        return acceptedJobs;
+      case "Rejected":
+        return rejectedJobs;
+      default:
+        return [...pendingJobs, ...acceptedJobs, ...rejectedJobs];
+    }
+  };
+
+  const filteredJobs = getFilteredJobs();
+  const totalJobs =
+    pendingJobs.length + acceptedJobs.length + rejectedJobs.length;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -117,7 +148,12 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
               <Feather name="arrow-left" size={24} color="white" />
             </Link>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Pending Applications</Text>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle}>My Applications</Text>
+            <Text style={styles.headerSubtitle}>
+              {totalJobs} total application{totalJobs !== 1 ? "s" : ""}
+            </Text>
+          </View>
         </View>
         <View style={styles.headerRight}>
           <TouchableOpacity
@@ -148,48 +184,38 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
       <ScrollView
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
       >
-        <TouchableOpacity style={styles.jobCard} activeOpacity={0.8}>
-          {pendingJobs?.map((job: any) => (
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Loading applications...</Text>
+          </View>
+        ) : filteredJobs.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Feather name="clock" size={64} color="#ccc" />
+            <Text style={styles.emptyStateText}>
+              {selectedFilter === "All"
+                ? "No applications found"
+                : `No ${selectedFilter.toLowerCase()} applications`}
+            </Text>
+            <Text style={styles.emptyStateSubtext}>
+              {selectedFilter === "All"
+                ? "Your job applications will appear here"
+                : `Your ${selectedFilter.toLowerCase()} applications will appear here`}
+            </Text>
+          </View>
+        ) : (
+          filteredJobs.map((job: any) => (
             <JobCard
+              key={`${job.job_id}-${job.application_id || job.apply_date}`}
               user_id={userData?.id}
               job_id={job.job_id}
               apply_date={job.apply_date}
               status={job.status}
-              key={job.job_id}
+              application_id={job.application_id}
             />
-          ))}
-        </TouchableOpacity>
-
-        {acceptedJobs?.map((job: any, index: any) => (
-          <JobCard
-            user_id={userData?.id}
-            job_id={job.job_id}
-            apply_date={job.apply_date}
-            status={job.status}
-            key={job.job_id}
-          />
-        ))}
-
-        {rejectedJobs?.map((job: any, index: any) => (
-          <JobCard
-            user_id={userData?.id}
-            job_id={job.job_id}
-            apply_date={job.apply_date}
-            status={job.status}
-            key={job.job_id}
-          />
-        ))}
-
-        {/* {filteredJobs.length === 0 && (
-          <View style={styles.emptyState}>
-            <Feather name="clock" size={64} color="#ccc" />
-            <Text style={styles.emptyStateText}>No pending applications</Text>
-            <Text style={styles.emptyStateSubtext}>
-              Your pending job applications will appear here
-            </Text>
-          </View>
-        )} */}
+          ))
+        )}
       </ScrollView>
 
       {/* Filter Modal */}
@@ -208,7 +234,7 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
-            {/* {filterOptions.map((option) => (
+            {filterOptions.map((option) => (
               <TouchableOpacity
                 key={option}
                 style={[
@@ -227,12 +253,26 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
                   ]}
                 >
                   {option}
+                  {option !== "All" && (
+                    <Text style={styles.filterCount}>
+                      {" "}
+                      (
+                      {option === "Pending"
+                        ? pendingJobs.length
+                        : option === "Accepted"
+                        ? acceptedJobs.length
+                        : option === "Rejected"
+                        ? rejectedJobs.length
+                        : 0}
+                      )
+                    </Text>
+                  )}
                 </Text>
                 {selectedFilter === option && (
                   <Feather name="check" size={20} color="#FF8C42" />
                 )}
               </TouchableOpacity>
-            ))} */}
+            ))}
           </View>
         </View>
       </Modal>
@@ -241,7 +281,10 @@ const PendingJobsScreen: React.FC<PendingJobsProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F5F5" },
+  container: {
+    flex: 1,
+    backgroundColor: "#F5F5F5",
+  },
   header: {
     backgroundColor: "#FF8C42",
     paddingTop: 20,
@@ -253,14 +296,29 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
-  headerLeft: { flexDirection: "row", alignItems: "center", flex: 1 },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  headerTitleContainer: {
+    marginLeft: 15,
+    flex: 1,
+  },
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
     color: "white",
-    marginLeft: 15,
   },
-  headerRight: { flexDirection: "row", gap: 10 },
+  headerSubtitle: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.8)",
+    marginTop: 2,
+  },
+  headerRight: {
+    flexDirection: "row",
+    gap: 10,
+  },
   filterButton: {
     width: 40,
     height: 40,
@@ -283,93 +341,54 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginHorizontal: 20,
     marginTop: 15,
-    padding: 10,
+    padding: 12,
     backgroundColor: "rgba(255, 140, 66, 0.1)",
-    borderRadius: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255, 140, 66, 0.2)",
   },
-  filterText: { color: "#FF8C42", fontWeight: "600" },
-  scrollContainer: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
-  jobCard: {
-    backgroundColor: "white",
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 15,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  jobHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 15,
-  },
-  jobTitleContainer: { flex: 1 },
-  jobTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
-  },
-  jobCompany: { fontSize: 14, color: "#666" },
-  statusBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    gap: 4,
-  },
-  statusText: { fontSize: 12, color: "white", fontWeight: "600" },
-  jobDetails: { marginBottom: 15 },
-  jobDetailItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  jobDetailText: { fontSize: 14, color: "#666", marginLeft: 8 },
-  jobDescription: {
+  filterText: {
+    color: "#FF8C42",
+    fontWeight: "600",
     fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
-    marginBottom: 15,
   },
-  jobActions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingTop: 15,
-    borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
-  },
-  actionButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: "#F8F8F8",
+  scrollContainer: {
     flex: 1,
-    marginHorizontal: 2,
-    justifyContent: "center",
   },
-  actionText: { fontSize: 12, marginLeft: 5, color: "#666" },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#666",
+    fontWeight: "500",
+  },
   emptyState: {
     alignItems: "center",
-    paddingVertical: 50,
+    paddingVertical: 60,
+    paddingHorizontal: 20,
   },
   emptyStateText: {
     fontSize: 18,
     fontWeight: "600",
     color: "#666",
     marginTop: 20,
+    textAlign: "center",
   },
   emptyStateSubtext: {
     fontSize: 14,
     color: "#999",
     marginTop: 8,
     textAlign: "center",
+    lineHeight: 20,
   },
   modalOverlay: {
     flex: 1,
@@ -381,7 +400,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     padding: 20,
-    width: "80%",
+    width: "85%",
     maxHeight: "60%",
   },
   modalHeader: {
@@ -390,33 +409,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  modalTitle: { fontSize: 18, fontWeight: "bold", color: "#333" },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
   filterOption: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 15,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    marginBottom: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    marginBottom: 8,
   },
-  selectedFilterOption: { backgroundColor: "rgba(255, 140, 66, 0.1)" },
-  filterOptionText: { fontSize: 16, color: "#333" },
-  selectedFilterText: { color: "#FF8C42", fontWeight: "600" },
-  bottomNav: {
-    backgroundColor: "#FFFFFF",
-    borderTopWidth: 1,
-    borderTopColor: "#E0E0E0",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    elevation: 10,
+  selectedFilterOption: {
+    backgroundColor: "rgba(255, 140, 66, 0.1)",
   },
-  navItem: { alignItems: "center", flex: 1 },
-  navText: { fontSize: 10, fontWeight: "500", color: "#999", marginTop: 4 },
-  navTextActive: { color: "#FF8C42" },
+  filterOptionText: {
+    fontSize: 16,
+    color: "#333",
+    flex: 1,
+  },
+  selectedFilterText: {
+    color: "#FF8C42",
+    fontWeight: "600",
+  },
+  filterCount: {
+    fontSize: 14,
+    color: "#999",
+    fontWeight: "normal",
+  },
 });
 
 export default PendingJobsScreen;

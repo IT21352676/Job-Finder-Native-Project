@@ -181,12 +181,12 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
             </Link>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
+          {/* <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="check-circle" size={24} color="white" />
             <Text style={styles.menuText}>
               <Link href="/(tabs)/JobSeeker/completedjobs">COMPLETED JOBS</Link>
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="message-circle" size={24} color="white" />

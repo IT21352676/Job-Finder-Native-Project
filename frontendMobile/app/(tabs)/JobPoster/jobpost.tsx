@@ -216,12 +216,12 @@ const PostJobScreen = () => {
             placeholder="Enter Amount of Employees"
           />
 
-          <Text style={styles.label}>Hourly Title</Text>
+          <Text style={styles.label}>Enter Amount</Text>
           <TextInput
             style={styles.input}
             value={hourly_title}
             onChangeText={setHourly_rate}
-            placeholder="Enter Hourly Title"
+            placeholder="Enter Amount"
           />
 
           <Text style={styles.label}>Requirements</Text>

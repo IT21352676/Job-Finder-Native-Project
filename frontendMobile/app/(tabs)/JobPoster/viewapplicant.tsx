@@ -13,6 +13,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { Link, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { socket } from "./homepage";
+import JobCountdown from "@/components/date_countdown";
 
 const FETCH_APPLICATIONS_API_URL =
   "http://localhost:8000/mobile/secured/applications/job-poster/";
@@ -137,6 +138,20 @@ const ViewApplicantsScreen = () => {
     //   ]
     // );
   };
+
+  const [isComplete, setIsComplete] = useState(false);
+
+  // useEffect(() => {
+  //   const completeJob = async () => {
+  //     const response = await fetch("http://localhost:8000/mobile/secured/application/job-complete",{
+  //       method:"POST",
+  //       body:JSON.stringify({
+  //         application_id:
+
+  //       })
+  //     })
+  //   };
+  // }, []);
 
   const handleDecline = async (
     applicantId: number,
@@ -433,6 +448,20 @@ const ViewApplicantsScreen = () => {
                     </Text>
                   </View>
                 </View> */}
+                <View style={styles.countdownContainer}>
+                  <JobCountdown
+                    applicationId={applicant.application_id}
+                    jobId={applicant.job_id}
+                    onComplete={() => {
+                      // Handle countdown completion
+                      Alert.alert(
+                        "Job Deadline Reached",
+                        "The job deadline has been reached for this application."
+                      );
+                    }}
+                    style={styles.countdownStyle}
+                  />
+                </View>
 
                 <View style={styles.statusContainer}>
                   <View
@@ -538,17 +567,7 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 16,
   },
-  applicantCard: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
+
   processedCard: {
     opacity: 0.8,
   },
@@ -665,6 +684,30 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
     lineHeight: 20,
+  },
+
+  countdownContainer: {
+    position: "absolute",
+    top: 12,
+    left: 12,
+    zIndex: 1,
+  },
+  countdownStyle: {
+    // Additional styling if needed
+  },
+  // Modify the existing applicantCard style to add paddingTop for the countdown
+  applicantCard: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 16,
+    paddingTop: 50, // Add extra padding for the countdown
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    position: "relative", // Enable absolute positioning for countdown
   },
 });
 
