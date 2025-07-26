@@ -35,7 +35,7 @@ const PaymentSuccessPage = () => {
           </View> */}
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Service Fee</Text>
-            <Text style={styles.summaryValue}>{`$ ${(
+            <Text style={styles.summaryValue}>{`Rs. ${(
               (Number(amount) || 0) * 0.1
             ).toFixed(2)}`}</Text>
           </View>

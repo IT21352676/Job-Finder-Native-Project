@@ -184,6 +184,38 @@ const displayApplications = async (req, res) => {
   });
 };
 
+// DESC: JOB COMPLETE
+const jobComplete = async (req, res) => {
+  try {
+    const { application_id, job_id } = req.body;
+
+    if (!application_id || !job_id) {
+      return res
+        .status(400)
+        .json({ error: "Required fields must be filled with values" });
+    }
+
+    const query = `
+      SELECT j.job_date, a.apply_date
+      FROM parttime_srilanka.job_application a
+      JOIN parttime_srilanka.job j ON a.job_id = j.job_id
+      WHERE a.application_id = ? AND a.job_id = ?
+    `;
+
+    const values = [application_id, job_id];
+
+    connection.query(query, values, (err, data) => {
+      if (err) {
+        return res.status(500).json({ error: "Server error" });
+      }
+      res.status(200).json(data);
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Unexpected server error" });
+  }
+};
+
 module.exports = {
   applyForAJob,
   displayAcceptedJobs,
@@ -193,4 +225,5 @@ module.exports = {
   rejectJobRequest,
   viewJobSeekerData,
   displayApplications,
+  jobComplete,
 };
