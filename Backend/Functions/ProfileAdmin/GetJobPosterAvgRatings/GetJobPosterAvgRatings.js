@@ -1,16 +1,28 @@
-const connection = require('../../../Services/connection')
+const connection = require("../../../Services/connection");
 
-async function getJobPoterAvgRatings(req, res){
-    const sql = 'SELECT jp.FirstName, jp.LastName, jp.EmailAddress, ROUND(AVG(pr.rate), 1) AS average_rating FROM job_poster jp JOIN poster_ratings pr ON jp.EmailAddress = pr.poster GROUP BY jp.EmailAddress;'
+async function getJobPosterAvgRatings(req, res) {
+  const sql = `
+    SELECT 
+      jp.firstname,
+      jp.lastname,
+      jp.emailAddress,
+      ROUND(AVG(pr.rating), 1) AS average_rating
+    FROM 
+      job_poster jp
+    JOIN 
+      seeker_reviews pr ON jp.poster_id = pr.poster_id
+    GROUP BY 
+      jp.firstname, jp.lastname, jp.emailAddress;
+  `;
 
-    connection.query(sql, (err, result)=>{
-        if(err){
-            res.status(500).send('Error Retriving Ratings')
-        }else{
-            res.status(200).send(result)
-        }
-    })
+  connection.query(sql, (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      res.status(500).send("Error retrieving ratings");
+    } else {
+      res.status(200).json(result);
+    }
+  });
 }
 
-
-module.exports = getJobPoterAvgRatings
+module.exports = getJobPosterAvgRatings;
