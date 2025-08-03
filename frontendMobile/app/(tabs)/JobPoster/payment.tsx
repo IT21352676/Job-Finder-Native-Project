@@ -124,6 +124,7 @@ const PaymentPage = () => {
           poster_id: user.id,
           amount,
           job_id,
+          seeker_id: seekerId,
         }),
       });
 
