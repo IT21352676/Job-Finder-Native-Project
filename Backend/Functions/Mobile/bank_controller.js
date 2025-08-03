@@ -93,10 +93,16 @@ const withdrawal = async (req, res) => {
 };
 
 const payment = async (req, res) => {
+  const { poster_id, amount, job_id, seeker_id } = req.body;
+
+  if (!poster_id || !amount || !job_id || !seeker_id) {
+    return res.status(400).json({ error: "Required fields are empty" });
+  }
+
   const insertQuery = `
     INSERT INTO payment 
     (poster_id, amount, payment_date, device_charge, reseller_charge, seeker_charge, service_charge, job_id) 
-    VALUES (?, ?, NOW(), (? * 0.05), (? * 0.10), (? * 0.70), (? * 0.15), ?)
+    VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)
   `;
 
   const updateSeekerWalletQuery = `
@@ -105,38 +111,64 @@ const payment = async (req, res) => {
     WHERE seeker_id = ?
   `;
 
-  const { poster_id, amount, job_id, seeker_id } = req.body;
-  if (!poster_id || !amount || !job_id) {
-    console.log(poster_id, amount, job_id);
-    return res.status(400).json({ error: "Required fields are empty" });
-  }
+  const deviceCharge = amount * 0.05;
+  const resellerCharge = amount * 0.1;
+  const seekerCharge = amount * 0.7;
+  const serviceCharge = amount * 0.15;
 
-  console.log(poster_id, amount, job_id);
-  const values = [poster_id, amount, amount, amount, amount, amount, job_id];
+  const insertValues = [
+    poster_id,
+    amount,
+    deviceCharge,
+    resellerCharge,
+    seekerCharge,
+    serviceCharge,
+    job_id,
+  ];
 
-  // Insert into payment table
-  connection.query(insertQuery, values, (err) => {
-    if (err) {
-      return res.status(500).json({ error: `Insert failed: ${err}` });
-    }
+  try {
+    connection.beginTransaction((err) => {
+      if (err) throw err;
 
-    // Update seeker wallet
-    connection.query(
-      updateSeekerWalletQuery,
-      [amount * 0.7, seeker_id],
-      (err) => {
+      connection.query(insertQuery, insertValues, (err) => {
         if (err) {
-          return res
-            .status(500)
-            .json({ error: `Wallet update failed: ${err}` });
+          return connection.rollback(() => {
+            res.status(500).json({ error: `Insert failed: ${err.message}` });
+          });
         }
 
-        return res
-          .status(201)
-          .json({ message: "Payment successful and wallet updated" });
-      }
-    );
-  });
+        connection.query(
+          updateSeekerWalletQuery,
+          [seekerCharge, seeker_id],
+          (err) => {
+            if (err) {
+              return connection.rollback(() => {
+                res
+                  .status(500)
+                  .json({ error: `Wallet update failed: ${err.message}` });
+              });
+            }
+
+            connection.commit((err) => {
+              if (err) {
+                return connection.rollback(() => {
+                  res
+                    .status(500)
+                    .json({ error: `Commit failed: ${err.message}` });
+                });
+              }
+
+              return res
+                .status(201)
+                .json({ message: "Payment successful and wallet updated" });
+            });
+          }
+        );
+      });
+    });
+  } catch (error) {
+    res.status(500).json({ error: `Unhandled error: ${error.message}` });
+  }
 };
 
 module.exports = { createBankAcc, withdrawal, payment, getBankDetails };
