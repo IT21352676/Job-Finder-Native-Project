@@ -152,9 +152,11 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ navigation }) => {
             <TouchableOpacity style={styles.notificationIcon}>
               <Feather name="bell" size={16} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="settings" size={16} color="white" />
-            </TouchableOpacity>
+            <Link href="/(tabs)/authentication/loginseeker">
+              <TouchableOpacity style={styles.notificationIcon}>
+                <Feather name="log-out" size={16} color="white" />
+              </TouchableOpacity>
+            </Link>
           </View>
         </View>
 

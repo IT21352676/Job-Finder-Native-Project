@@ -1,39 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Spin, message, Button } from 'antd';
-import axios from 'axios';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import React, { useEffect, useState } from "react";
+import { Table, Spin, message, Button } from "antd";
+import axios from "axios";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 // Define the columns for the table
 const columns = [
   {
-    title: 'Job Poster',
-    dataIndex: 'job_poster',
-    key: 'job_poster',
+    title: "Job Poster",
+    dataIndex: "poster_id",
+    key: "poster_id",
     render: (text, record) => (
       <a href={`/jobPoster/${record.job_poster}`}>{text}</a>
     ),
   },
   {
-    title: 'Poster Name',
-    dataIndex: 'posterName',
-    key: 'posterName',
+    title: "Poster Name",
+    dataIndex: "posterName",
+    key: "posterName",
   },
   {
-    title: 'Payment Date',
-    dataIndex: 'payment_date',
-    key: 'payment_date',
+    title: "Payment Date",
+    dataIndex: "payment_date",
+    key: "payment_date",
     render: (date) => new Date(date).toLocaleDateString(),
   },
   {
-    title: 'Amount',
-    dataIndex: 'amount',
-    key: 'amount',
+    title: "Amount",
+    dataIndex: "amount",
+    key: "amount",
   },
   {
-    title: 'Payment ID',
-    dataIndex: 'payment_id',
-    key: 'payment_id',
+    title: "Payment ID",
+    dataIndex: "payment_id",
+    key: "payment_id",
     render: (text) => (
       <a href={`http://localhost:3000/Payments/${text}`}>{text}</a>
     ),
@@ -49,10 +49,10 @@ const PaymentInfoTableJobPoster = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/paymentdata');
+        const response = await axios.get("http://localhost:8000/paymentdata");
         setData(response.data);
       } catch (error) {
-        message.error('Error fetching data');
+        message.error("Error fetching data");
       } finally {
         setLoading(false);
       }
@@ -65,7 +65,10 @@ const PaymentInfoTableJobPoster = () => {
     setCurrentPage(page);
   };
 
-  const currentData = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const currentData = data.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -83,12 +86,23 @@ const PaymentInfoTableJobPoster = () => {
     ]);
 
     doc.autoTable({
-      head: [['#', 'Job Poster', 'Poster Name', 'Payment Date', 'Amount', 'Payment ID']],
+      head: [
+        [
+          "#",
+          "Job Poster",
+          "Poster Name",
+          "Payment Date",
+          "Amount",
+          "Payment ID",
+        ],
+      ],
       body: tableData,
       startY: 30,
     });
 
-    const reportName = `Payment_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+    const reportName = `Payment_Report_${
+      new Date().toISOString().split("T")[0]
+    }.pdf`;
     doc.save(reportName);
   };
 
@@ -97,33 +111,68 @@ const PaymentInfoTableJobPoster = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ textAlign: 'left', padding: '20px', border: '1px solid #ffa500', borderRadius: '10px' }}>
-        <span style={{ fontWeight: 'bold', fontSize: 24, paddingTop: '20px', display: 'block', color: '#ffa500' }}>
+    <div style={{ padding: "20px" }}>
+      <div
+        style={{
+          textAlign: "left",
+          padding: "20px",
+          border: "1px solid #ffa500",
+          borderRadius: "10px",
+        }}
+      >
+        <span
+          style={{
+            fontWeight: "bold",
+            fontSize: 24,
+            paddingTop: "20px",
+            display: "block",
+            color: "#ffa500",
+          }}
+        >
           Payment Information From Job Posters
         </span>
-        <div style={{ padding: '10px' }}>
-          <Table columns={columns} dataSource={currentData} pagination={false} rowKey="payment_id" bordered style={{ borderColor: '#ffa500' }} />
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        <div style={{ padding: "10px" }}>
+          <Table
+            columns={columns}
+            dataSource={currentData}
+            pagination={false}
+            rowKey="payment_id"
+            bordered
+            style={{ borderColor: "#ffa500" }}
+          />
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
             <Button
               disabled={currentPage === 1}
               onClick={() => handlePageChange(currentPage - 1)}
-              style={{ backgroundColor: '#ffa500', borderColor: '#ffa500', color: 'white' }}
+              style={{
+                backgroundColor: "#ffa500",
+                borderColor: "#ffa500",
+                color: "white",
+              }}
             >
               Previous
             </Button>
             <Button
-              style={{ marginLeft: '10px', backgroundColor: '#ffa500', borderColor: '#ffa500', color: 'white' }}
+              style={{
+                marginLeft: "10px",
+                backgroundColor: "#ffa500",
+                borderColor: "#ffa500",
+                color: "white",
+              }}
               disabled={currentPage * pageSize >= data.length}
               onClick={() => handlePageChange(currentPage + 1)}
             >
               Next
             </Button>
           </div>
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
             <Button
               onClick={generatePDF}
-              style={{ backgroundColor: '#ffa500', borderColor: '#ffa500', color: 'white' }}
+              style={{
+                backgroundColor: "#ffa500",
+                borderColor: "#ffa500",
+                color: "white",
+              }}
             >
               Download PDF
             </Button>

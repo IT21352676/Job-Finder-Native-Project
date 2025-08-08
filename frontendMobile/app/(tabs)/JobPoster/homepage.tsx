@@ -252,9 +252,11 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
             <TouchableOpacity style={styles.notificationIcon}>
               <Feather name="bell" size={16} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.notificationIcon}>
-              <Feather name="settings" size={16} color="white" />
-            </TouchableOpacity>
+            <Link href="/(tabs)/authentication/loginposter">
+              <TouchableOpacity style={styles.notificationIcon}>
+                <Feather name="log-out" size={16} color="white" />
+              </TouchableOpacity>
+            </Link>
           </View>
         </View>
 
@@ -295,7 +297,7 @@ const JobPosterDashboard: React.FC<JobPosterDashboardProps> = ({
 
           <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
             <Feather name="message-circle" size={24} color="white" />
-            <Link href="/(tabs)/JobPoster/viewReviews">
+            <Link href="/(tabs)/JobPoster/viewreviews">
               <Text style={styles.menuText}>VIEW REVIEWS</Text>
             </Link>
           </TouchableOpacity>
