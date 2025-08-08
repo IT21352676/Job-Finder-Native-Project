@@ -4,17 +4,17 @@ const { HttpStatusCode } = require("axios");
 module.exports = async function getPaymentData(req, res) {
   try {
     const query1 =
-      "select * from parttime_srilanka.payment inner join parttime_srilanka.job  where payment.job_id = job.job_id;";
+      "select * from parttime_srilanka.payment inner join parttime_srilanka.job  where parttime_srilanka.payment.job_id = parttime_srilanka.job.job_id;";
     const query2 =
-      "select FirstName, LastName from job_poster where EmailAddress=?";
+      "select firstname, lastname from parttime_srilanka.job_poster where poster_id= ?";
 
     const data1 = await queryAsync(query1);
     const returnData = [];
 
     if (data1 != null) {
       for (const job of data1) {
-        const user = await queryAsync(query2, job.job_poster);
-        job.posterName = user[0].FirstName + " " + user[0].LastName;
+        const user = await queryAsync(query2, job.poster_id);
+        job.posterName = user[0].firstname + " " + user[0].lastname;
         returnData.push(job);
       }
       return res.status(HttpStatusCode.Ok).json(returnData);

@@ -29,8 +29,25 @@ interface User {
   email: string;
   role: string;
 }
+
+interface Job {
+  job_id: string;
+  poster_id: string;
+  title: string;
+  description: string;
+  location: string;
+  work_hours: string;
+  gender: string;
+  start_date: string;
+  job_date: string;
+  amount_of_seekers: number;
+  status: string;
+}
+
 const JobsList = () => {
   const [userData, setUserData] = useState<User>();
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobRatings, setJobRatings] = useState<{ [key: string]: number }>({});
 
   const fetchStoredData = useCallback(async () => {
     try {
@@ -53,16 +70,12 @@ const JobsList = () => {
     fetchStoredData();
   }, [fetchStoredData]);
 
-  // TODO: Replace with dynamic userId (e.g., from auth context or AsyncStorage)
-
   const userId = userData?.id; // seeker ID
 
   const [activeNav, setActiveNav] = useState("Jobs");
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState("");
   const roomIdRef = useRef("");
-
-  const [jobs, setJobs] = useState([] as any);
 
   socket.emit("register", userId, "Job Seeker");
 
@@ -72,16 +85,68 @@ const JobsList = () => {
         "http://localhost:8000/mobile/secured/job-poster/get-all-open"
       );
       const data = await res.json();
-      setJobs(data.data);
+      setJobs(data.data || []);
     } catch (err) {
       console.error("Failed to fetch joblist:", err);
-      setJobs({} as any);
+      setJobs([]);
+    }
+  };
+
+  // Function to calculate average rating from reviews
+  const calculateAverageRating = (reviews: any[]) => {
+    if (!reviews || reviews.length === 0) return 0;
+    const totalRating = reviews.reduce(
+      (sum, review) => sum + (review.rating || 0),
+      0
+    );
+    return totalRating / reviews.length;
+  };
+
+  // Function to fetch ratings for all job posters
+  const fetchJobRatings = async () => {
+    try {
+      const ratingsMap: { [key: string]: number } = {};
+
+      // Create a unique list of poster IDs
+      const posterIds = [...new Set(jobs.map((job: Job) => job.poster_id))];
+
+      // Fetch ratings for each unique poster
+      for (const posterId of posterIds) {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/mobile/secured/get-job-reviews-by-user/${posterId}`
+          );
+
+          if (response.ok) {
+            const reviews = await response.json();
+            const averageRating = calculateAverageRating(reviews);
+            ratingsMap[posterId] = averageRating;
+          } else {
+            console.log(`No reviews found for poster ${posterId}`);
+            ratingsMap[posterId] = 0;
+          }
+        } catch (err) {
+          console.error(`Error fetching reviews for poster ${posterId}:`, err);
+          ratingsMap[posterId] = 0;
+        }
+      }
+
+      setJobRatings(ratingsMap);
+    } catch (err) {
+      console.error("Error fetching job ratings:", err);
     }
   };
 
   useEffect(() => {
     fetchJobList();
   }, []);
+
+  // Fetch ratings after jobs are loaded
+  useEffect(() => {
+    if (jobs.length > 0) {
+      fetchJobRatings();
+    }
+  }, [jobs]);
 
   const goBack = () => Alert.alert("Navigation", "Go back");
 
@@ -251,6 +316,7 @@ const JobsList = () => {
       }, 2000);
     });
   };
+
   useEffect(() => {
     listenNotification();
   }, []);
@@ -295,9 +361,25 @@ const JobsList = () => {
   };
 
   const renderStars = (rating: number) => {
-    const full = Math.floor(rating);
-    const stars = Array.from({ length: 5 }, (_, i) => (i < full ? "★" : "☆"));
-    return stars.join(" ");
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    let stars = "";
+    // Full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars += "★";
+    }
+    // Half star
+    if (hasHalfStar) {
+      stars += "☆";
+    }
+    // Empty stars
+    for (let i = 0; i < emptyStars; i++) {
+      stars += "☆";
+    }
+
+    return stars;
   };
 
   const handleJobApply = async (job_id: any, poster_id: any) => {
@@ -373,7 +455,7 @@ const JobsList = () => {
 
       {/* Jobs List */}
       <ScrollView contentContainerStyle={styles.jobsContainer}>
-        {jobs.map((job: any, index: any) => (
+        {jobs.map((job: Job, index: number) => (
           <View key={index} style={styles.jobCard}>
             <View style={styles.jobHeader}>
               <View>
@@ -408,14 +490,30 @@ const JobsList = () => {
               />
             </View>
             <View style={styles.rowGroup}>
-              <JobDetail label="Openings" value={job.amount_of_seekers} />
+              <JobDetail
+                label="Openings"
+                value={job.amount_of_seekers.toString()}
+              />
             </View>
 
             <View style={styles.jobFooter}>
-              <Text style={styles.rating}>
-                {job.rating && renderStars(job.rating)}
-                {job.rating ? job.rating.toFixed(1) : "No ratings"}
-              </Text>
+              <View style={styles.ratingContainer}>
+                <Text style={styles.rating}>
+                  {jobRatings[job.poster_id] ? (
+                    <>
+                      <Text style={styles.ratingStars}>
+                        {renderStars(jobRatings[job.poster_id])}
+                      </Text>
+                      <Text style={styles.ratingScore}>
+                        {" "}
+                        ({jobRatings[job.poster_id].toFixed(1)})
+                      </Text>
+                    </>
+                  ) : (
+                    <Text style={styles.noRating}>No ratings yet</Text>
+                  )}
+                </Text>
+              </View>
 
               <TouchableOpacity
                 onPress={() => handleChatWithUS(job.poster_id, job.job_id)}
@@ -612,21 +710,41 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  ratingContainer: {
+    flex: 1,
+  },
   rating: {
-    fontSize: 14,
+    fontSize: 12,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  ratingStars: {
     color: "#FFD700",
+    fontSize: 12,
+  },
+  ratingScore: {
+    color: "#666",
+    fontSize: 12,
+    marginLeft: 4,
+  },
+  noRating: {
+    color: "#999",
+    fontSize: 12,
+    fontStyle: "italic",
   },
   applyBtn: {
     backgroundColor: "#FF8C42",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 15,
+    marginLeft: 8,
   },
   chatBtn: {
     backgroundColor: "#FF8C42",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 15,
+    marginLeft: 8,
   },
   applyText: {
     color: "white",

@@ -45,7 +45,9 @@ const JobItem = ({ job }: any) => {
       <Text>
         Poster : {posterData[0]?.firstname} {posterData[0]?.lastname}
       </Text>
-      <Text>Poster Email : {posterData[0]?.emailAddress}</Text>
+      <Text style={{ fontSize: 10 }}>
+        Poster Email : {posterData[0]?.emailAddress}
+      </Text>
     </>
   );
 };
